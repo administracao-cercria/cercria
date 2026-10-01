@@ -112,3 +112,43 @@
   font-weight: bold;
   color: #fff;
 }
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+
+    width: 0;
+    height: calc(100vh - 60px);
+
+    padding-top: 0;
+    padding-bottom: 0;
+
+    z-index: 1000;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    transition: width 0.3s ease;
+
+    box-shadow: none;
+  }
+
+  .sidebar.aberta {
+    width: 270px;
+
+    padding-top: 20px;
+    padding-bottom: 20px;
+
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .menu-item {
+    width: 270px;
+  }
+
+  .submenu {
+    width: 270px;
+  }
+}

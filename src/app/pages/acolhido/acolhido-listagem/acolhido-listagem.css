@@ -313,3 +313,189 @@ th:last-child {
   color: #6b7280;
   font-size: 14px;
 }
+
+@media (max-width: 1024px) {
+  .form-list-panel {
+    width: calc(100% - 40px);
+    margin: 30px 20px;
+  }
+
+  table {
+    width: 90%;
+  }
+
+  .buttons {
+    gap: 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    width: 100%;
+  }
+
+  .form-list-panel {
+    width: calc(100% - 30px);
+    margin: 20px 15px;
+    min-height: auto;
+  }
+
+  h2 {
+    margin-top: 30px;
+    padding-left: 5%;
+    font-size: 22px;
+  }
+
+  .breadcrumb {
+    padding-left: 5%;
+    padding-right: 5%;
+    flex-wrap: wrap;
+    font-size: 14px;
+  }
+
+  .filters {
+    width: 90%;
+    margin: 20px auto 10px;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    gap: 8px;
+  }
+
+  .filters label {
+    padding: 7px 14px;
+    font-size: 13px;
+  }
+
+  .btnExterno {
+    width: 90%;
+    justify-content: center;
+    margin: 15px auto;
+  }
+
+  .btnExterno .btn {
+    width: 100%;
+  }
+
+  .list-panel {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 90%;
+    min-width: 550px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  th,
+  td {
+    padding: 11px 12px;
+    font-size: 14px;
+  }
+
+  .buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 7px;
+  }
+
+  .buttons .btn,
+  .btn-excluir {
+    padding: 7px 11px;
+    font-size: 13px;
+  }
+
+  .paginacao {
+    width: 90%;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .pagina-btn {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .card-overlay {
+    padding: 15px;
+    box-sizing: border-box;
+  }
+
+  .card-funcionario {
+    width: 100%;
+    max-width: 400px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 20px;
+  }
+
+  .card-funcionario h2 {
+    padding-left: 0;
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-list-panel {
+    width: calc(100% - 20px);
+    margin: 10px;
+    border-radius: 10px;
+  }
+
+  h2 {
+    font-size: 20px;
+    margin-top: 25px;
+  }
+
+  .breadcrumb {
+    font-size: 13px;
+  }
+
+  .filters {
+    width: 88%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters label {
+    text-align: center;
+  }
+
+  table {
+    min-width: 500px;
+  }
+
+  /* PAGINAÇÃO */
+
+  .paginacao {
+    width: 90%;
+    justify-content: center;
+  }
+
+  .pagina-btn {
+    padding: 7px 9px;
+    font-size: 12px;
+  }
+
+  .reticencias {
+    padding: 7px 2px;
+  }
+
+  .card-funcionario {
+    padding: 18px;
+  }
+
+  .card-funcionario p {
+    font-size: 14px;
+    word-break: break-word;
+  }
+
+  .card-funcionario .btn {
+    width: 100%;
+  }
+}
