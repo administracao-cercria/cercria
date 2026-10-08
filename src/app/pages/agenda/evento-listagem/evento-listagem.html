@@ -53,7 +53,7 @@
 
       <div class="popup-footer">
         @if (temPermissao('evento:excluir')) {
-          <a class="btn-excluir" (click)="excluir(eventoSelecionado.id)"> Excluir </a>
+          <a class="btn-excluir" (click)="excluir(eventoSelecionado.id)"> Desabilitar </a>
         }
         @if (temPermissao('evento:editar')) {
           <button class="btn-editar" [routerLink]="['/agenda/evento-edicao', eventoSelecionado.id]">
@@ -63,58 +63,6 @@
 
         <button class="btn-fechar" (click)="fecharPopup()">Fechar</button>
       </div>
-    </div>
-  </div>
-}
-
-<!-- POPUP MEDICAMENTO -->
-@if (mostrarPopup && tipoSelecionado === 'medicamento' && agendaSelecionada) {
-  <div class="popup-overlay" (click)="fecharPopup()">
-    <div class="popup-card" (click)="$event.stopPropagation()">
-      <div class="popup-header">
-        <h3>Administrar Medicamento</h3>
-      </div>
-
-      <div class="popup-body">
-        <p>
-          <strong>Acolhido:</strong>
-          {{ agendaSelecionada.acolhido }}
-        </p>
-
-        <p>
-          <strong>Medicamento:</strong>
-          {{ agendaSelecionada.medicamento }}
-        </p>
-
-        <p>
-          <strong>Horário:</strong>
-          {{ agendaSelecionada.horario }}
-        </p>
-      </div>
-
-      <div class="popup-footer">
-        @if (temPermissao('medicamento:saida')) {
-          <button class="btn-editar" (click)="darMedicamento(agendaSelecionada.id)">Dar</button>
-        }
-        @if (temPermissao('medicamento:saida')) {
-          <button class="btn-fechar" (click)="mostrarMotivo = !mostrarMotivo">Não deu</button>
-        }
-      </div>
-
-      @if (mostrarMotivo) {
-        <div class="campo-recusa">
-          <label>Motivo da recusa</label>
-          <textarea
-            [(ngModel)]="motivoRecusa"
-            rows="3"
-            placeholder="Ex.: acolhido recusou tomar"
-          ></textarea>
-
-          <button type="button" class="btn-confirmar" (click)="naoTomou(agendaSelecionada.id)">
-            Confirmar
-          </button>
-        </div>
-      }
     </div>
   </div>
 }

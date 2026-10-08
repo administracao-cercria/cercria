@@ -86,7 +86,7 @@ export class FuncionarioService {
     }
   }
 
-  recuperarSenha(email: string): Observable<any> {
-    return this.http.post<any>(`${this.url}/recuperar-senha`, { email });
+  recuperarSenha(email: string) {
+    return this.http.post(`${this.url}/recuperar-senha`, { email });
   }
 }

@@ -11,8 +11,12 @@ export class AgendaMedicamentoService {
 
   private api: string = `${environment.apiUrl}/controle-medicamento/agenda`;
 
-  selecionar(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.api}/listagem`);
+  selecionar(data: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.api}/listagem`, {
+      params: {
+        data,
+      },
+    });
   }
 
   buscarPorAcolhido(id: number): Observable<any[]> {

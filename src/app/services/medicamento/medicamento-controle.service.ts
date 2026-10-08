@@ -12,12 +12,10 @@ export class ControleMedicamentoService {
 
   private url: string = `${environment.apiUrl}/controle-medicamento`;
 
-  cadastrar(dados: any): Observable<any> {
-    return this.http.post<any>(`${this.url}/cadastro`, dados).pipe(
-      catchError((err) => {
-        console.error('Erro ao salvar programação', err);
-        return throwError(() => err);
-      }),
+  cadastrar(controle: any, confirmarSemEstoque: boolean = false) {
+    return this.http.post(
+      `${this.url}/cadastro?confirmarSemEstoque=${confirmarSemEstoque}`,
+      controle,
     );
   }
 

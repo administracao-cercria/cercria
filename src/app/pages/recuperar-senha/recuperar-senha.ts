@@ -1,6 +1,6 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { FuncionarioService } from '../../services/funcionario/funcionario.service';
 
@@ -12,14 +12,12 @@ import { FuncionarioService } from '../../services/funcionario/funcionario.servi
 })
 export class RecuperarSenha {
   email = '';
-  senhaTemporaria = '';
   carregando = false;
+  emailEnviado = false;
 
   constructor(
     private servico: FuncionarioService,
     private toastr: ToastrService,
-    private router: Router,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   recuperar() {
@@ -29,16 +27,14 @@ export class RecuperarSenha {
     }
 
     this.carregando = true;
-    this.senhaTemporaria = '';
+    this.emailEnviado = false;
 
     this.servico.recuperarSenha(this.email).subscribe({
-      next: (resposta) => {
+      next: () => {
         this.carregando = false;
+        this.emailEnviado = true;
 
-        this.senhaTemporaria = resposta.senhaTemporaria;
-        this.cdr.detectChanges();
-
-        //console.log('Senha temporária:', resposta.senhaTemporaria);
+        this.toastr.success('Senha temporária enviada para seu e-mail.');
       },
 
       error: (err) => {
@@ -47,13 +43,11 @@ export class RecuperarSenha {
         if (err.status === 404) {
           this.toastr.error('Nenhum funcionário encontrado com esse e-mail.');
         } else {
-          this.toastr.error('Erro ao recuperar senha.');
+          console.error(err);
+
+          this.toastr.error('Não foi possível enviar o e-mail de recuperação.');
         }
       },
     });
-  }
-
-  irParaLogin() {
-    this.router.navigate(['/login']);
   }
 }

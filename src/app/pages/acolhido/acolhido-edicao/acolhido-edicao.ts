@@ -21,6 +21,8 @@ import Swal from 'sweetalert2';
   styleUrl: './acolhido-edicao.css',
 })
 export class AcolhidoEdicao implements OnInit {
+  salvando = false;
+  dataAtual: string = new Date().toISOString().split('T')[0];
   acolhido: Acolhido = new Acolhido();
   carregado = false;
 
@@ -35,9 +37,24 @@ export class AcolhidoEdicao implements OnInit {
 
   //Método de edição
   editar(): void {
-    this.servico.editar(this.acolhido).subscribe(() => {
-      this.acolhido.ativo = !this.acolhido.dataSaida;
-      this.toastr.success('Acolhido editado com sucesso!');
+    if (this.salvando) {
+      return;
+    }
+
+    this.salvando = true;
+
+    this.servico.editar(this.acolhido).subscribe({
+      next: () => {
+        this.salvando = false;
+        this.acolhido.ativo = !this.acolhido.dataSaida;
+        this.toastr.success('Acolhido editado com sucesso!');
+      },
+
+      error: (err) => {
+        this.salvando = false;
+        console.error('Erro ao editar acolhido:', err);
+        this.toastr.error(err.error?.message || 'Erro ao editar acolhido.', 'Erro');
+      },
     });
   }
 
@@ -53,7 +70,7 @@ export class AcolhidoEdicao implements OnInit {
     //Carregar dados do acolhido nos campos respectivos
     this.servico.buscarPorId(id).subscribe({
       next: (retorno) => {
-        console.log('RETORNO:', retorno);
+        //console.log('RETORNO:', retorno);
 
         this.acolhido = retorno;
 

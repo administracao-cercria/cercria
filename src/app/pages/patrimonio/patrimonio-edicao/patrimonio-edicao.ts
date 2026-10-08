@@ -17,6 +17,7 @@ import Swal from 'sweetalert2';
   styleUrl: './patrimonio-edicao.css',
 })
 export class PatrimonioEdicao {
+  salvando = false;
   // Objeto do tipo patrimônio
   patrimonio: Patrimonio = new Patrimonio();
 
@@ -30,8 +31,26 @@ export class PatrimonioEdicao {
 
   //Método de edição
   editar(): void {
-    this.servico.editar(this.patrimonio).subscribe(() => {
-      this.toastr.success('Patrimônio editado com sucesso!');
+    if (this.salvando) {
+      return;
+    }
+
+    this.salvando = true;
+
+    this.servico.editar(this.patrimonio).subscribe({
+      next: () => {
+        this.salvando = false;
+
+        this.toastr.success('Patrimônio editado com sucesso!');
+      },
+
+      error: (err) => {
+        this.salvando = false;
+
+        console.error('Erro ao editar patrimônio:', err);
+
+        this.toastr.error(err.error?.message || 'Erro ao editar patrimônio.', 'Erro');
+      },
     });
   }
 

@@ -24,12 +24,14 @@ import Swal from 'sweetalert2';
   styleUrl: './medicamento-controle.css',
 })
 export class MedicamentoControle implements OnInit {
+  salvando = false;
   constructor(
     private cdr: ChangeDetectorRef,
     private toastr: ToastrService,
   ) {}
 
   abaAtiva: 'programado' | 'esporadico' = 'programado';
+  frequencia: 'intervalo' | 'horarios' = 'intervalo';
   usuarioLogado!: number;
 
   //Listas
@@ -96,6 +98,11 @@ export class MedicamentoControle implements OnInit {
 
   // Método de cadastro de medicamentos periódicos
   salvarProgramacao(form: NgForm): void {
+    // Impede múltiplos cliques enquanto estiver salvando
+    if (this.salvando) {
+      return;
+    }
+
     const usuarioStorage = sessionStorage.getItem('usuario');
 
     if (!usuarioStorage) {
@@ -104,8 +111,6 @@ export class MedicamentoControle implements OnInit {
     }
 
     const usuario = JSON.parse(usuarioStorage);
-
-    //console.log('USUÁRIO DO SESSION STORAGE:', usuario);
 
     const funcionarioId = usuario.id;
 
@@ -125,6 +130,14 @@ export class MedicamentoControle implements OnInit {
       return;
     }
 
+    if (!this.novaProgramacao.medicamento?.id) {
+      this.toastr.error('Selecione um medicamento.');
+      return;
+    }
+
+    // Só bloqueia o botão depois que todas as validações passaram
+    this.salvando = true;
+
     this.novaProgramacao.acolhido = {
       id: this.acolhidoId,
     };
@@ -141,11 +154,6 @@ export class MedicamentoControle implements OnInit {
       this.novaProgramacao.dataFim = undefined;
     }
 
-    if (!this.novaProgramacao.medicamento?.id) {
-      this.toastr.error('Selecione um medicamento.');
-      return;
-    }
-
     const dados = {
       ...this.novaProgramacao,
       diasSemana: this.novaProgramacao.diasSemana.join(','),
@@ -153,45 +161,99 @@ export class MedicamentoControle implements OnInit {
 
     this.controleService.cadastrar(dados).subscribe({
       next: () => {
+        this.salvando = false;
+
         this.toastr.success('Medicamento programado com sucesso!');
 
         form.resetForm();
+
+        this.frequencia = 'intervalo';
+
+        this.novaProgramacao = new ControleUsoMedicamento();
+
+        this.novaProgramacao.acolhido = {
+          id: this.acolhidoId,
+        };
+
+        this.novaProgramacao.dose = 1;
       },
 
       error: (err) => {
         console.error('Erro:', err);
 
+        if (err.status === 409) {
+          Swal.fire({
+            title: 'Quantidade insuficiente',
+            text: 'Não há quantidade disponível em estoque para o período informado. Deseja cadastrar mesmo assim?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Confirmar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+          }).then((resultado) => {
+            if (resultado.isConfirmed) {
+              this.cadastrarMesmoSemEstoque(dados, form);
+            } else {
+              // Usuário cancelou
+              this.salvando = false;
+            }
+          });
+
+          return;
+        }
+
+        // Outros erros liberam o botão
+        this.salvando = false;
+
         this.toastr.error(err.error?.message || 'Erro ao cadastrar programação.');
       },
     });
   }
+  salvandoSaida = false;
 
   // Método para salvar saída esporádica
   salvarSaidaEsporadica(form: NgForm): void {
+    // Impede duplo clique
+    if (this.salvandoSaida) {
+      return;
+    }
+
     const dados = {
       data: this.novaSaidaEsporadica.dataSaida,
       horario: this.novaSaidaEsporadica.horario,
       dose: this.novaSaidaEsporadica.dose,
       motivo: this.novaSaidaEsporadica.motivo,
       status: 'DADO',
-      acolhido: {
-        id: this.acolhidoId,
-      },
-      medicamento: {
-        id: this.novaSaidaEsporadica.medicamentoId,
-      },
+      acolhido: { id: this.acolhidoId },
+      medicamento: { id: this.novaSaidaEsporadica.medicamentoId },
       funcionarioResponsavel: this.novaSaidaEsporadica.responsavel,
     };
 
-    //console.log('ESPORADICO →', dados);
+    this.salvandoSaida = true;
 
     this.controleService.salvarSaidaEsporadica(dados).subscribe({
       next: () => {
+        this.salvandoSaida = false;
+
         this.toastr.success('Saída registrada!');
+
         form.resetForm();
+
+        // Mantém o responsável como o funcionário logado
+        this.novaSaidaEsporadica = new SaidaEsporadica();
+        this.novaSaidaEsporadica.responsavel = {
+          id: this.usuarioLogado,
+        };
+
+        this.cdr.detectChanges();
       },
+
       error: (err) => {
-        console.error(err);
+        console.error('Erro ao registrar saída:', err);
+
+        this.salvandoSaida = false;
 
         if (typeof err.error === 'string') {
           this.toastr.error(err.error);
@@ -256,6 +318,42 @@ export class MedicamentoControle implements OnInit {
 
       error: (err) => {
         console.error('Erro ao carregar funcionários', err);
+      },
+    });
+  }
+
+  alterarFrequencia(): void {
+    if (this.frequencia === 'intervalo') {
+      this.novaProgramacao.horarioFixo = '';
+    } else {
+      this.novaProgramacao.intervalo = undefined;
+      this.novaProgramacao.iniciandoEm = '';
+      this.novaProgramacao.vezesAoDia = undefined;
+    }
+  }
+
+  cadastrarMesmoSemEstoque(dados: any, form: NgForm): void {
+    this.controleService.cadastrar(dados, true).subscribe({
+      next: () => {
+        this.toastr.success('Medicamento programado com sucesso!');
+
+        form.resetForm();
+
+        this.frequencia = 'intervalo';
+
+        this.novaProgramacao = new ControleUsoMedicamento();
+
+        this.novaProgramacao.acolhido = {
+          id: this.acolhidoId,
+        };
+
+        this.novaProgramacao.dose = 1;
+      },
+
+      error: (err) => {
+        console.error('Erro ao cadastrar mesmo sem estoque:', err);
+
+        this.toastr.error(err.error?.message || 'Erro ao cadastrar programação.');
       },
     });
   }

@@ -11,7 +11,6 @@ import interactionPlugin from '@fullcalendar/interaction';
 import ptBrLocale from '@fullcalendar/core/locales/pt-br';
 import { ChangeDetectorRef } from '@angular/core';
 import { EventoService } from '../../../services/evento/evento.service';
-import { AgendaMedicamentoService } from '../../../services/medicamento/agenda-medicamento.service';
 import { Evento } from '../../../models/Evento';
 import { AcolhidoService } from '../../../services/acolhido/acolhido.service';
 import { FuncionarioService } from '../../../services/funcionario/funcionario.service';
@@ -69,35 +68,16 @@ export class EventoListagem implements OnInit, AfterViewInit {
     events: [],
 
     eventClick: (info) => {
-      const tipo = info.event.extendedProps['tipo'];
-      if (tipo === 'medicamento') {
-        this.tipoSelecionado = 'medicamento';
-
-        this.agendaSelecionada = {
-          id: Number(info.event.id),
-          acolhido: info.event.extendedProps['acolhido'],
-          medicamento: info.event.extendedProps['medicamento'],
-          horario: info.event.extendedProps['horario'],
-          status: info.event.extendedProps['status'],
-        };
-
-        this.mostrarPopup = true;
-        this.cd.detectChanges();
-        return;
-      }
-
       this.tipoSelecionado = 'evento';
       this.abrirPopup(Number(info.event.id));
     },
   };
 
-  // Injeção do serviço responsável pelas operações com acolhidos, eventos, funcionários e agenda
+  // Injeção do serviço responsável pelas operações com acolhidos, eventos, funcionários
   private acolhidoService = inject(AcolhidoService);
   private eventoService = inject(EventoService);
   private funcionarioService = inject(FuncionarioService);
-  private agendaService = inject(AgendaMedicamentoService);
 
-  agendaSelecionada: any = null;
   tipoSelecionado = '';
 
   constructor(
@@ -145,29 +125,6 @@ export class EventoListagem implements OnInit, AfterViewInit {
         calendarApi.addEventSource(listaEventos);
       },
     });
-
-    this.agendaService.selecionar().subscribe({
-      next: (agenda) => {
-        const listaAgenda = agenda
-          .filter((a: any) => a.status === 'PENDENTE')
-
-          .map((a: any) => ({
-            id: String(a.id),
-            title: `${a.acolhido.nome}`,
-            start: this.formatarData(a.data, a.horario),
-            color: '#dc3545',
-            extendedProps: {
-              tipo: 'medicamento',
-              acolhido: a.acolhido.nome,
-              medicamento: a.medicamento.nome,
-              horario: a.horario,
-              status: a.status,
-            },
-          }));
-
-        calendarApi.addEventSource(listaAgenda);
-      },
-    });
   }
 
   formatarData(data: string, hora: string): string {
@@ -189,7 +146,6 @@ export class EventoListagem implements OnInit, AfterViewInit {
   fecharPopup(): void {
     this.mostrarPopup = false;
     this.eventoSelecionado = null;
-    this.agendaSelecionada = null;
 
     this.mostrarMotivo = false;
     this.motivoRecusa = '';
@@ -238,52 +194,6 @@ export class EventoListagem implements OnInit, AfterViewInit {
 
   mostrarMotivo = false;
   motivoRecusa = '';
-
-  // Método para confirmar a saída do medicamento no calendário
-  darMedicamento(agendaId: number): void {
-    this.agendaService
-      .marcarTomou(agendaId)
-
-      .subscribe({
-        next: () => {
-          this.toastr.success('Medicamento administrado');
-          this.fecharPopup();
-          this.carregarEventos();
-        },
-        error: (err) => {
-          console.error(err);
-          this.toastr.error('Erro ao registrar');
-        },
-      });
-  }
-
-  // Método para confirmar a não-saída do medicamento
-  naoTomou(agendaId: number): void {
-    if (!this.motivoRecusa.trim()) {
-      this.toastr.warning('Informe o motivo');
-      return;
-    }
-
-    this.agendaService
-      .marcarNaoTomou(agendaId, this.motivoRecusa)
-
-      .subscribe({
-        next: () => {
-          this.toastr.warning('Marcado como não tomado');
-
-          this.fecharPopup();
-
-          setTimeout(() => {
-            this.carregarEventos();
-          }, 100);
-        },
-
-        error: (err) => {
-          console.error(err);
-          this.toastr.error('Erro ao registrar');
-        },
-      });
-  }
 
   //Método excluir
   excluir(id: number): void {

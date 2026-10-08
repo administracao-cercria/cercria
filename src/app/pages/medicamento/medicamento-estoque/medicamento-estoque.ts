@@ -24,6 +24,7 @@ import Swal from 'sweetalert2';
   styleUrl: './medicamento-estoque.css',
 })
 export class MedicamentoEstoque implements OnInit {
+  salvando = false;
   constructor(
     private toastr: ToastrService,
     private cdr: ChangeDetectorRef,
@@ -100,17 +101,26 @@ export class MedicamentoEstoque implements OnInit {
 
   // Método para salvar a entrada
   salvarEntrada(form: NgForm): void {
+    if (this.salvando) {
+      return;
+    }
+
     this.novaEntrada.medicamento!.id = this.medicamentoId;
+    this.salvando = true;
 
     this.entradaService.cadastrar(this.novaEntrada).subscribe({
       next: () => {
+        this.salvando = false;
         this.toastr.success('Entrada cadastrada!');
         this.carregarEstoque();
         form.resetForm();
+        this.limparFormEntrada();
       },
 
       error: (err) => {
-        console.error(err);
+        this.salvando = false;
+        console.error('Erro ao cadastrar entrada:', err);
+        this.toastr.error(err.error?.message || 'Erro ao cadastrar entrada.');
       },
     });
   }

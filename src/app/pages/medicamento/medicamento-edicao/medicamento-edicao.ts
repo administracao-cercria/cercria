@@ -18,6 +18,7 @@ import Swal from 'sweetalert2';
   styleUrl: './medicamento-edicao.css',
 })
 export class MedicamentoEdicao {
+  salvando = false;
   // Objeto do tipo medicamento
   medicamento: Medicamento = new Medicamento();
 
@@ -31,8 +32,26 @@ export class MedicamentoEdicao {
 
   //Método de edição
   editar(): void {
-    this.servico.editar(this.medicamento).subscribe(() => {
-      this.toastr.success('Medicamento editado com sucesso!');
+    if (this.salvando) {
+      return;
+    }
+
+    this.salvando = true;
+
+    this.servico.editar(this.medicamento).subscribe({
+      next: () => {
+        this.salvando = false;
+
+        this.toastr.success('Medicamento editado com sucesso!');
+      },
+
+      error: (err) => {
+        this.salvando = false;
+
+        console.error('Erro ao editar medicamento:', err);
+
+        this.toastr.error(err.error?.message || 'Erro ao editar medicamento.', 'Erro');
+      },
     });
   }
 

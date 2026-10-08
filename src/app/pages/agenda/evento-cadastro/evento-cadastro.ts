@@ -22,6 +22,7 @@ import Swal from 'sweetalert2';
   styleUrl: './evento-cadastro.css',
 })
 export class EventoCadastro {
+  salvando = false;
   @ViewChild('form')
   formulario!: NgForm;
   // Lista de eventos cadastrados
@@ -72,7 +73,12 @@ export class EventoCadastro {
   }
 
   // Método de Cadastro
-  cadastrar(form: any): void {
+  cadastrar(form: NgForm): void {
+    // Impede duplo clique
+    if (this.salvando) {
+      return;
+    }
+
     if (
       !this.evento.nome ||
       !this.evento.data ||
@@ -84,18 +90,28 @@ export class EventoCadastro {
       return;
     }
 
+    this.salvando = true;
+
     this.eventoService.cadastrar(this.evento).subscribe({
       next: (retorno) => {
+        this.salvando = false;
+
         this.eventos.push(retorno);
         this.evento = new Evento();
+
         form.reset();
 
         this.toastr.success('Evento cadastrado com sucesso!');
+
         this.router.navigate(['/agenda/listagem']);
       },
+
       error: (err) => {
+        this.salvando = false;
+
         console.error('Erro ao cadastrar evento', err);
-        this.toastr.error('Erro ao cadastrar evento.');
+
+        this.toastr.error(err.error?.message || 'Erro ao cadastrar evento.');
       },
     });
   }

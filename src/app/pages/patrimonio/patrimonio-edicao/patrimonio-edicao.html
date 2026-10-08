@@ -15,67 +15,81 @@
 
     <!-- FORMULÁRIO DE EDIÇÃO DE PATRIMÔNIO -->
     <form class="form-grid" #form="ngForm" (ngSubmit)="editar()">
-      <!-- TOMBAMENTO -->
-      <div class="campo">
-        <label>Tombamento<span>*</span></label>
-        <input
-          type="text"
-          name="tombamento"
-          placeholder="Digite o número do patrimônio"
-          minlength="3"
-          required
-          [(ngModel)]="patrimonio.tombamento"
-          #tombamento="ngModel"
-        />
+      <fieldset [disabled]="salvando">
+        <!-- TOMBAMENTO -->
+        <div class="campo">
+          <label>Tombamento<span>*</span></label>
+          <input
+            type="text"
+            name="tombamento"
+            placeholder="Digite o número do patrimônio"
+            minlength="3"
+            required
+            [(ngModel)]="patrimonio.tombamento"
+            #tombamento="ngModel"
+          />
 
-        @if (tombamento.touched) {
-          @if (tombamento.errors?.['required']) {
-            <small class="erro">Tombamento é obrigatório</small>
-          } @else if (tombamento.errors?.['minlength']) {
-            <small class="erro">Mínimo de 3 caracteres</small>
+          @if (tombamento.touched) {
+            @if (tombamento.errors?.['required']) {
+              <small class="erro">Tombamento é obrigatório</small>
+            } @else if (tombamento.errors?.['minlength']) {
+              <small class="erro">Mínimo de 3 caracteres</small>
+            }
           }
-        }
-      </div>
+        </div>
 
-      <!-- DATA DE AQUISIÇÃO -->
-      <div class="campo">
-        <label>Data de aquisição</label>
-        <input
-          type="date"
-          name="data"
-          placeholder="Digite o nome do produto"
-          required
-          [(ngModel)]="patrimonio.dtAquisicao"
-        />
-      </div>
+        <!-- DATA DE AQUISIÇÃO -->
+        <div class="campo">
+          <label>Data de aquisição</label>
+          <input
+            type="date"
+            name="data"
+            placeholder="Digite o nome do produto"
+            required
+            [(ngModel)]="patrimonio.dtAquisicao"
+          />
+        </div>
 
-      <!-- ESPECIFICAÇÃO -->
-      <div class="campo grande">
-        <label>Especificação<span>*</span></label>
-        <textarea
-          rows="5"
-          name="especificacao"
-          minlength="3"
-          required
-          [(ngModel)]="patrimonio.especificacao"
-          #especificacao="ngModel"
-        ></textarea>
+        <!-- ESPECIFICAÇÃO -->
+        <div class="campo grande">
+          <label>Especificação<span>*</span></label>
+          <textarea
+            rows="5"
+            name="especificacao"
+            minlength="3"
+            required
+            [(ngModel)]="patrimonio.especificacao"
+            #especificacao="ngModel"
+          ></textarea>
 
-        @if (especificacao.touched) {
-          @if (especificacao.errors?.['required']) {
-            <small class="erro">Especificação é obrigatório</small>
-          } @else if (especificacao.errors?.['minlength']) {
-            <small class="erro">Mínimo de 3 caracteres</small>
+          @if (especificacao.touched) {
+            @if (especificacao.errors?.['required']) {
+              <small class="erro">Especificação é obrigatório</small>
+            } @else if (especificacao.errors?.['minlength']) {
+              <small class="erro">Mínimo de 3 caracteres</small>
+            }
           }
-        }
-      </div>
+        </div>
 
-      <!-- BOTÕES INFERIORES -->
-      <div class="form-buttons">
-        <button type="submit" class="btn" [disabled]="form.invalid">Alterar</button>
-        <button type="reset" class="btn">Limpar</button>
-        <a routerLink="/patrimonio/listagem" class="btn-voltar">Voltar</a>
-      </div>
+        <!-- BOTÕES INFERIORES -->
+        <div class="form-buttons">
+          <button type="submit" class="btn" [disabled]="salvando || form.invalid">
+            @if (salvando) {
+              Alterando...
+            } @else {
+              Alterar
+            }
+          </button>
+          <button type="reset" class="btn">Limpar</button>
+          <a routerLink="/patrimonio/listagem" class="btn-voltar">Voltar</a>
+        </div>
+      </fieldset>
+      @if (salvando) {
+        <div class="mensagem-salvando">
+          <span class="spinner"></span>
+          <span>Alterando, aguarde...</span>
+        </div>
+      }
     </form>
   </div>
 </div>

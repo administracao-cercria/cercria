@@ -6,6 +6,7 @@
   <div class="estoque-container">
     <div class="estoque-header">
       <h2>Controle de Estoque de Produtos</h2>
+
       <!-- BREADCRUMB -->
       <nav class="breadcrumb">
         <a routerLink="/home">Home</a>
@@ -21,7 +22,7 @@
       <div
         class="tab"
         [class.ativo]="abaSelecionada === 'entrada'"
-        (click)="abaSelecionada = 'entrada'"
+        (click)="!salvandoEntrada && (abaSelecionada = 'entrada')"
       >
         Entrada
       </div>
@@ -29,7 +30,7 @@
       <div
         class="tab"
         [class.ativo]="abaSelecionada === 'saida'"
-        (click)="abaSelecionada = 'saida'"
+        (click)="!salvandoSaida && (abaSelecionada = 'saida')"
       >
         Saída
       </div>
@@ -39,234 +40,310 @@
     <div class="produto-panel">
       <div class="produto-panel-body">
         <!-- ENTRADA -->
+
         @if (abaSelecionada === 'entrada') {
           <form #formEntrada="ngForm" (ngSubmit)="salvarEntrada(formEntrada)">
-            <div class="produto-form-grid">
-              <div class="produto-campo">
+            <fieldset [disabled]="salvandoEntrada">
+              <div class="produto-form-grid">
                 <!-- PRODUTO -->
-                <label>Produto <span class="asterisco">*</span></label>
-                <select
-                  [(ngModel)]="entrada.produtoId"
-                  name="produtoEntrada"
-                  #produto="ngModel"
-                  required
-                >
-                  <option [ngValue]="null">Selecione</option>
-                  @for (p of produtos; track p.id) {
-                    <option [ngValue]="p.id">
-                      {{ p.nome }}
-                    </option>
+                <div class="produto-campo">
+                  <label> Produto <span class="asterisco">*</span> </label>
+
+                  <select
+                    [(ngModel)]="entrada.produtoId"
+                    name="produtoEntrada"
+                    #produto="ngModel"
+                    required
+                  >
+                    <option [ngValue]="null">Selecione</option>
+
+                    @for (p of produtos; track p.id) {
+                      <option [ngValue]="p.id">
+                        {{ p.nome }}
+                      </option>
+                    }
+                  </select>
+
+                  @if (produto.touched && produto.invalid) {
+                    <small class="erro"> Produto é obrigatório </small>
                   }
-                </select>
+                </div>
 
-                @if (produto.touched && produto.invalid) {
-                  <small class="erro">Produto é obrigatório</small>
-                }
-              </div>
+                <!-- QUANTIDADE -->
+                <div class="produto-campo">
+                  <label> Quantidade <span class="asterisco">*</span> </label>
 
-              <!-- QUANTIDADE -->
-              <div class="produto-campo">
-                <label>Quantidade <span class="asterisco">*</span></label>
-                <input
-                  type="number"
-                  min="1"
-                  step="1"
-                  [(ngModel)]="entrada.quantidade"
-                  name="qtdeEntrada"
-                  #qtdeEntrada="ngModel"
-                />
+                  <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    [(ngModel)]="entrada.quantidade"
+                    name="qtdeEntrada"
+                    #qtdeEntrada="ngModel"
+                    required
+                  />
 
-                @if (qtdeEntrada.touched && qtdeEntrada.invalid) {
-                  <small class="erro">Quantidade é obrigatória</small>
-                }
-              </div>
-
-              <!-- DATA DE VALIDADE -->
-              <div class="produto-campo">
-                <label>Data de validade</label>
-                <input type="date" [(ngModel)]="entrada.dataValidade" name="dtValidade" />
-              </div>
-
-              <div class="produto-campo">
-                <label>Data de entrada <span class="asterisco">*</span></label>
-                <input
-                  type="date"
-                  [(ngModel)]="entrada.dataEntrada"
-                  name="dtEntrada"
-                  #dtEntrada="ngModel"
-                  required
-                />
-
-                @if (dtEntrada.touched && dtEntrada.invalid) {
-                  <small class="erro">Data de entrada é obrigatória</small>
-                }
-              </div>
-
-              <!-- ORIGEM -->
-              <div class="produto-campo">
-                <label>Origem <span class="asterisco">*</span></label>
-                <select [(ngModel)]="entrada.origem" name="origem" #origem="ngModel" required>
-                  <option value="">Selecione</option>
-                  <option value="Prefeitura">Prefeitura</option>
-                  <option value="Feira Livre">Feira Livre</option>
-                  <option value="Supermercado">Supermercado</option>
-                  <option value="Doação">Doação</option>
-                </select>
-
-                @if (origem.touched && origem.invalid) {
-                  <small class="erro">Origem é obrigatório</small>
-                }
-              </div>
-
-              <!-- RESPONSÁVEL -->
-              <div class="produto-campo">
-                <label>Responsável <span class="asterisco">*</span></label>
-
-                <select
-                  [(ngModel)]="entrada.funcionarioId"
-                  name="funcionarioEntrada"
-                  #funcionarioEntrada="ngModel"
-                  required
-                >
-                  <option [ngValue]="null">Selecione</option>
-
-                  @for (f of funcionarios; track f.id) {
-                    <option [ngValue]="f.id">
-                      {{ f.nome }}
-                    </option>
+                  @if (qtdeEntrada.touched && qtdeEntrada.invalid) {
+                    <small class="erro"> Quantidade é obrigatória </small>
                   }
-                </select>
+                </div>
 
-                @if (funcionarioEntrada.touched && funcionarioEntrada.invalid) {
-                  <small class="erro">Funcionário é obrigatório</small>
-                }
+                <!-- DATA DE VALIDADE -->
+                <div class="produto-campo">
+                  <label>Data de validade</label>
+
+                  <input type="date" [(ngModel)]="entrada.dataValidade" name="dtValidade" />
+                </div>
+
+                <!-- DATA DE ENTRADA -->
+                <div class="produto-campo">
+                  <label> Data de entrada <span class="asterisco">*</span> </label>
+
+                  <input
+                    type="date"
+                    [(ngModel)]="entrada.dataEntrada"
+                    name="dtEntrada"
+                    #dtEntrada="ngModel"
+                    required
+                  />
+
+                  @if (dtEntrada.touched && dtEntrada.invalid) {
+                    <small class="erro"> Data de entrada é obrigatória </small>
+                  }
+                </div>
+
+                <!-- ORIGEM -->
+                <div class="produto-campo">
+                  <label> Origem <span class="asterisco">*</span> </label>
+
+                  <select [(ngModel)]="entrada.origem" name="origem" #origem="ngModel" required>
+                    <option value="">Selecione</option>
+
+                    <option value="Prefeitura">Prefeitura</option>
+
+                    <option value="Feira Livre">Feira Livre</option>
+
+                    <option value="Supermercado">Supermercado</option>
+
+                    <option value="Doação">Doação</option>
+                  </select>
+
+                  @if (origem.touched && origem.invalid) {
+                    <small class="erro"> Origem é obrigatório </small>
+                  }
+                </div>
+
+                <!-- RESPONSÁVEL -->
+                <div class="produto-campo">
+                  <label> Responsável <span class="asterisco">*</span> </label>
+
+                  <select
+                    [(ngModel)]="entrada.funcionarioId"
+                    name="funcionarioEntrada"
+                    #funcionarioEntrada="ngModel"
+                    required
+                  >
+                    <option [ngValue]="null">Selecione</option>
+
+                    @for (f of funcionarios; track f.id) {
+                      <option [ngValue]="f.id">
+                        {{ f.nome }}
+                      </option>
+                    }
+                  </select>
+
+                  @if (funcionarioEntrada.touched && funcionarioEntrada.invalid) {
+                    <small class="erro"> Funcionário é obrigatório </small>
+                  }
+                </div>
+
+                <!-- OBSERVAÇÃO -->
+                <div class="produto-campo full">
+                  <label>Observação</label>
+
+                  <textarea
+                    [(ngModel)]="entrada.observacao"
+                    name="obs"
+                    #obs="ngModel"
+                    required
+                  ></textarea>
+                </div>
               </div>
 
-              <!-- OBS -->
-              <div class="produto-campo full">
-                <label>Observação</label>
-                <textarea
-                  [(ngModel)]="entrada.observacao"
-                  name="obs"
-                  #obs="ngModel"
-                  required
-                ></textarea>
-              </div>
-            </div>
+              <!-- BOTÕES -->
+              <div class="produto-actions">
+                <button
+                  type="button"
+                  class="btn-limpar"
+                  (click)="limparEntrada()"
+                  [disabled]="salvandoEntrada"
+                >
+                  Limpar
+                </button>
 
-            <!-- BOTÕES INFERIORES -->
-            <div class="produto-actions">
-              <button type="button" class="btn-limpar" (click)="limparEntrada()">Limpar</button>
-              <button type="submit" class="btn-salvar">Salvar</button>
-            </div>
+                <button
+                  type="submit"
+                  class="btn-salvar"
+                  [disabled]="salvandoEntrada || formEntrada.invalid"
+                >
+                  @if (salvandoEntrada) {
+                    Salvando...
+                  } @else {
+                    Salvar
+                  }
+                </button>
+              </div>
+            </fieldset>
+
+            <!-- MENSAGEM DE SALVAMENTO -->
+            @if (salvandoEntrada) {
+              <div class="mensagem-salvando">
+                <span class="spinner"></span>
+                <span>Salvando, aguarde...</span>
+              </div>
+            }
           </form>
         }
 
-        <!--SAÍDA-->
+        <!-- SAÍDA -->
+
         @if (abaSelecionada === 'saida') {
           <form #formSaida="ngForm" (ngSubmit)="salvarSaida(formSaida)">
-            <div class="produto-form-grid">
-              <!-- PRODUTO -->
-              <div class="produto-campo">
-                <label>Produto <span class="asterisco">*</span></label>
-                <select
-                  [(ngModel)]="saida.produtoId"
-                  name="produtoSaida"
-                  #prodSaida="ngModel"
-                  required
-                >
-                  <option [ngValue]="null">Selecione</option>
+            <fieldset [disabled]="salvandoSaida">
+              <div class="produto-form-grid">
+                <!-- PRODUTO -->
+                <div class="produto-campo">
+                  <label> Produto <span class="asterisco">*</span> </label>
 
-                  @for (p of produtos; track p.id) {
-                    <option [ngValue]="p.id">
-                      {{ p.nome }}
-                    </option>
+                  <select
+                    [(ngModel)]="saida.produtoId"
+                    name="produtoSaida"
+                    #prodSaida="ngModel"
+                    required
+                  >
+                    <option [ngValue]="null">Selecione</option>
+
+                    @for (p of produtos; track p.id) {
+                      <option [ngValue]="p.id">
+                        {{ p.nome }}
+                      </option>
+                    }
+                  </select>
+
+                  @if (prodSaida.touched && prodSaida.invalid) {
+                    <small class="erro"> Produto é obrigatório </small>
                   }
-                </select>
+                </div>
 
-                @if (prodSaida.touched && prodSaida.invalid) {
-                  <small class="erro">Produto é obrigatório</small>
-                }
-              </div>
+                <!-- QUANTIDADE -->
+                <div class="produto-campo">
+                  <label> Quantidade <span class="asterisco">*</span> </label>
 
-              <!-- QUANTIDADE -->
-              <div class="produto-campo">
-                <label>Quantidade <span class="asterisco">*</span></label>
-                <input
-                  type="number"
-                  min="1"
-                  step="1"
-                  [(ngModel)]="saida.quantidade"
-                  name="qtde"
-                  #qtdeSaida="ngModel"
-                  required
-                />
+                  <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    [(ngModel)]="saida.quantidade"
+                    name="qtde"
+                    #qtdeSaida="ngModel"
+                    required
+                  />
 
-                @if (qtdeSaida.touched && qtdeSaida.invalid) {
-                  <small class="erro">Quantidade é obrigatória</small>
-                }
-              </div>
-
-              <!-- RESPONSÁVEL -->
-              <div class="produto-campo">
-                <label>Responsável <span class="asterisco">*</span></label>
-                <select
-                  [(ngModel)]="saida.funcionarioId"
-                  name="funcionarioSaida"
-                  #responsavel="ngModel"
-                  required
-                >
-                  <option [ngValue]="null">Selecione</option>
-
-                  @for (f of funcionarios; track f.id) {
-                    <option [ngValue]="f.id">
-                      {{ f.nome }}
-                    </option>
+                  @if (qtdeSaida.touched && qtdeSaida.invalid) {
+                    <small class="erro"> Quantidade é obrigatória </small>
                   }
-                </select>
+                </div>
 
-                @if (responsavel.touched && responsavel.invalid) {
-                  <small class="erro">Responsavel é obrigatório</small>
-                }
+                <!-- RESPONSÁVEL -->
+                <div class="produto-campo">
+                  <label> Responsável <span class="asterisco">*</span> </label>
+
+                  <select
+                    [(ngModel)]="saida.funcionarioId"
+                    name="funcionarioSaida"
+                    #responsavel="ngModel"
+                    required
+                  >
+                    <option [ngValue]="null">Selecione</option>
+
+                    @for (f of funcionarios; track f.id) {
+                      <option [ngValue]="f.id">
+                        {{ f.nome }}
+                      </option>
+                    }
+                  </select>
+
+                  @if (responsavel.touched && responsavel.invalid) {
+                    <small class="erro"> Responsável é obrigatório </small>
+                  }
+                </div>
+
+                <!-- DATA DE SAÍDA -->
+                <div class="produto-campo">
+                  <label> Data da saída <span class="asterisco">*</span> </label>
+
+                  <input
+                    type="date"
+                    [(ngModel)]="saida.dataSaida"
+                    name="dtSaida"
+                    #dtSaida="ngModel"
+                    required
+                  />
+
+                  @if (dtSaida.touched && dtSaida.invalid) {
+                    <small class="erro"> Data de saída é obrigatória </small>
+                  }
+                </div>
+
+                <!-- MOTIVO -->
+                <div class="produto-campo full">
+                  <label> Motivo <span class="asterisco">*</span> </label>
+
+                  <textarea
+                    [(ngModel)]="saida.motivo"
+                    name="motivo"
+                    #motivo="ngModel"
+                    required
+                  ></textarea>
+
+                  @if (motivo.touched && motivo.invalid) {
+                    <small class="erro"> Motivo da saída é obrigatório </small>
+                  }
+                </div>
               </div>
 
-              <!-- DATA DE SAÍDA -->
-              <div class="produto-campo">
-                <label>Data da saída <span class="asterisco">*</span></label>
-                <input
-                  type="date"
-                  [(ngModel)]="saida.dataSaida"
-                  name="dtSaida"
-                  #dtSaida="ngModel"
-                  required
-                />
+              <!-- BOTÕES -->
+              <div class="produto-actions">
+                <button
+                  type="button"
+                  class="btn-limpar"
+                  (click)="limparSaida()"
+                  [disabled]="salvandoSaida"
+                >
+                  Limpar
+                </button>
 
-                @if (dtSaida.touched && dtSaida.invalid) {
-                  <small class="erro">Data de saída é obrigatória</small>
-                }
+                <button
+                  type="submit"
+                  class="btn-salvar"
+                  [disabled]="salvandoSaida || formSaida.invalid"
+                >
+                  @if (salvandoSaida) {
+                    Salvando...
+                  } @else {
+                    Salvar
+                  }
+                </button>
               </div>
+            </fieldset>
 
-              <!-- MOTIVO -->
-              <div class="produto-campo full">
-                <label>Motivo <span class="asterisco">*</span></label>
-                <textarea
-                  [(ngModel)]="saida.motivo"
-                  name="motivo"
-                  #motivo="ngModel"
-                  required
-                ></textarea>
+            <!-- MENSAGEM DE SALVAMENTO -->
+            @if (salvandoSaida) {
+              <div class="mensagem-salvando">
+                <span class="spinner"></span>
+                <span>Salvando, aguarde...</span>
               </div>
-
-              @if (motivo.touched && motivo.invalid) {
-                <small class="erro">Motivo da saída é obrigatório</small>
-              }
-            </div>
-
-            <!-- BOTÕES INFERIORES -->
-            <div class="produto-actions">
-              <button type="button" class="btn-limpar" (click)="limparSaida()">Limpar</button>
-              <button type="submit" class="btn-salvar">Salvar</button>
-            </div>
+            }
           </form>
         }
       </div>

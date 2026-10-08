@@ -1,12 +1,14 @@
 <app-header></app-header>
+
 <div class="main-container">
   <app-sidebar></app-sidebar>
+
   <div class="page-content">
     <!-- BREADCRUMB -->
     <nav class="breadcrumb">
       <a routerLink="/home">Home</a>
       <span class="breadcrumb-span">/</span>
-      <a routerLink="/medicamento/listagem">Listagem de Medicamentos</a>
+      <a routerLink="/medicamento/listagem"> Listagem de Medicamentos </a>
       <span class="breadcrumb-span">/</span>
       <span>Estoque de {{ medicamento.nome }}</span>
     </nav>
@@ -16,10 +18,13 @@
       @if (medicamento; as m) {
         <div>
           <h2>{{ m.nome }}</h2>
-          <span class="badge-categoria">{{ m.categoria }}</span>
+          <span class="badge-categoria">
+            {{ m.categoria }}
+          </span>
         </div>
       }
-      <a routerLink="/medicamento/listagem" class="btn-voltar">← Voltar</a>
+
+      <a routerLink="/medicamento/listagem" class="btn-voltar"> Voltar </a>
     </div>
 
     <div class="content-row">
@@ -27,8 +32,14 @@
       <div class="cards-row">
         <div class="metric-card">
           <div class="metric-label">Estoque atual</div>
-          <div class="metric-val atual">{{ estoqueAtual }}</div>
-          <div class="metric-unit">{{ medicamento.unidadeMedida }}</div>
+
+          <div class="metric-val atual">
+            {{ estoqueAtual }}
+          </div>
+
+          <div class="metric-unit">
+            {{ medicamento.unidadeMedida }}
+          </div>
         </div>
       </div>
 
@@ -37,109 +48,137 @@
         <div class="panel-body">
           <div class="section-title">Registrar nova entrada</div>
 
-          <!-- FORMULÁRIO DE ENTRADA DE ESTOQUE -->
+          <!-- FORMULÁRIO -->
           <form #formEntrada="ngForm" (ngSubmit)="salvarEntrada(formEntrada)" class="form-grid">
-            <!-- QUANTIDADE -->
-            <div class="campo">
-              <label>Quantidade <span>*</span></label>
-              <input
-                type="number"
-                name="quantidade"
-                required
-                min="1"
-                [(ngModel)]="novaEntrada.quantidade"
-                #quantidade="ngModel"
-              />
+            <fieldset [disabled]="salvando">
+              <!-- QUANTIDADE -->
+              <div class="campo">
+                <label>Quantidade <span>*</span></label>
 
-              @if (quantidade.touched) {
-                @if (quantidade.errors?.['required']) {
-                  <small class="erro">Quantidade é obrigatória</small>
+                <input
+                  type="number"
+                  name="quantidade"
+                  required
+                  min="1"
+                  [(ngModel)]="novaEntrada.quantidade"
+                  #quantidade="ngModel"
+                />
+
+                @if (quantidade.touched) {
+                  @if (quantidade.errors?.['required']) {
+                    <small class="erro"> Quantidade é obrigatória </small>
+                  }
                 }
-              }
-            </div>
+              </div>
 
-            <!-- DATA DE VALIDADE -->
-            <div class="campo">
-              <label>Data de validade <span>*</span></label>
-              <input
-                type="date"
-                name="dataValidade"
-                required
-                [(ngModel)]="novaEntrada.dataValidade"
-                #dataValidade="ngModel"
-              />
+              <!-- DATA DE VALIDADE -->
+              <div class="campo">
+                <label> Data de validade <span>*</span> </label>
 
-              @if (dataValidade.touched) {
-                @if (dataValidade.errors?.['required']) {
-                  <small class="erro">Data de validade é obrigatória</small>
+                <input
+                  type="date"
+                  name="dataValidade"
+                  required
+                  [(ngModel)]="novaEntrada.dataValidade"
+                  #dataValidade="ngModel"
+                />
+
+                @if (dataValidade.touched) {
+                  @if (dataValidade.errors?.['required']) {
+                    <small class="erro"> Data de validade é obrigatória </small>
+                  }
                 }
-              }
-            </div>
+              </div>
 
-            <!-- ORIGEM -->
-            <div class="campo">
-              <label>Origem <span>*</span></label>
-              <select name="origem" required [(ngModel)]="novaEntrada.origem" #origem="ngModel">
-                <option value="">Selecione</option>
-                <option value="Prefeitura">Prefeitura</option>
-                <option value="Farmácia popular">Farmácia popular</option>
-              </select>
+              <!-- ORIGEM -->
+              <div class="campo">
+                <label>Origem <span>*</span></label>
 
-              @if (origem.touched) {
-                @if (origem.errors?.['required']) {
-                  <small class="erro">Origem é obrigatória</small>
+                <select name="origem" required [(ngModel)]="novaEntrada.origem" #origem="ngModel">
+                  <option value="">Selecione</option>
+
+                  <option value="Farmácia popular">Farmácia popular</option>
+
+                  <option value="Prefeitura">Prefeitura</option>
+
+                  <option value="Outro">Outro</option>
+                </select>
+
+                @if (origem.touched) {
+                  @if (origem.errors?.['required']) {
+                    <small class="erro"> Origem é obrigatória </small>
+                  }
                 }
-              }
-            </div>
+              </div>
 
-            <!-- DATA DE ENTRADA -->
-            <div class="campo">
-              <label>Data de entrada <span>*</span></label>
-              <input
-                type="date"
-                name="dataEntrada"
-                required
-                [(ngModel)]="novaEntrada.dataEntrada"
-                #dataEntrada="ngModel"
-              />
+              <!-- DATA DE ENTRADA -->
+              <div class="campo">
+                <label> Data de entrada <span>*</span> </label>
 
-              @if (dataEntrada.touched) {
-                @if (dataEntrada.errors?.['required']) {
-                  <small class="erro">Data de entrada é obrigatória</small>
+                <input
+                  type="date"
+                  name="dataEntrada"
+                  required
+                  [(ngModel)]="novaEntrada.dataEntrada"
+                  #dataEntrada="ngModel"
+                />
+
+                @if (dataEntrada.touched) {
+                  @if (dataEntrada.errors?.['required']) {
+                    <small class="erro"> Data de entrada é obrigatória </small>
+                  }
                 }
-              }
-            </div>
+              </div>
 
-            <!-- RESPONSÁVEL -->
-            <div class="campo">
-              <label>Responsável <span>*</span></label>
+              <!-- RESPONSÁVEL -->
+              <div class="campo">
+                <label> Responsável <span>*</span> </label>
 
-              <select
-                name="responsavel"
-                required
-                [(ngModel)]="novaEntrada.responsavel"
-                #responsavel="ngModel"
-              >
-                <option [ngValue]="undefined">Selecione</option>
+                <select
+                  name="responsavel"
+                  required
+                  [(ngModel)]="novaEntrada.responsavel"
+                  #responsavel="ngModel"
+                >
+                  <option [ngValue]="undefined">Selecione</option>
 
-                @for (r of responsaveis; track r.id) {
-                  <option [ngValue]="r">
-                    {{ r.nome }}
-                  </option>
+                  @for (r of responsaveis; track r.id) {
+                    <option [ngValue]="r">
+                      {{ r.nome }}
+                    </option>
+                  }
+                </select>
+
+                @if (responsavel.touched) {
+                  @if (responsavel.errors?.['required']) {
+                    <small class="erro"> Responsável é obrigatório </small>
+                  }
                 }
-              </select>
+              </div>
 
-              @if (responsavel.touched) {
-                @if (responsavel.errors?.['required']) {
-                  <small class="erro"> Responsável é obrigatório </small>
-                }
-              }
-            </div>
-            <!-- BOTÕES INFERIORES -->
-            <div class="form-actions">
-              <button type="button" class="btn-limpar" (click)="limparFormEntrada()">Limpar</button>
-              <button type="submit" class="btn" [disabled]="formEntrada.invalid">Salvar</button>
-            </div>
+              <!-- BOTÕES -->
+              <div class="form-actions">
+                <button type="button" class="btn-limpar" (click)="limparFormEntrada()">
+                  Limpar
+                </button>
+
+                <button type="submit" class="btn" [disabled]="salvando || formEntrada.invalid">
+                  @if (salvando) {
+                    Salvando...
+                  } @else {
+                    Salvar
+                  }
+                </button>
+              </div>
+            </fieldset>
+
+            <!-- MENSAGEM -->
+            @if (salvando) {
+              <div class="mensagem-salvando">
+                <span class="spinner"></span>
+                <span>Salvando, aguarde...</span>
+              </div>
+            }
           </form>
         </div>
       </div>

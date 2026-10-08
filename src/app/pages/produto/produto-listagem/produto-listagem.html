@@ -72,7 +72,7 @@
                     <a [routerLink]="['/produto/edicao', p.id]" class="btn">Editar</a>
                   }
                   @if (temPermissao('produto:excluir')) {
-                    <button (click)="excluir(p.id!)" class="btn-excluir">Excluir</button>
+                    <button (click)="excluir(p.id!)" class="btn-excluir">Desabilitar</button>
                   }
                 </div>
               </td>

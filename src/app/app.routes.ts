@@ -29,6 +29,7 @@ import { canDeactivateGuard } from './guards/can-deactivate-guard';
 import { perfilGuard } from './guards/perfil-guard';
 import { RecuperarSenha } from './pages/recuperar-senha/recuperar-senha';
 import { Relatorios } from './pages/relatorios/relatorios';
+import { MedicamentoAdministracao } from './pages/medicamento/medicamento-administracao/medicamento-administracao';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -72,7 +73,7 @@ export const routes: Routes = [
         component: MedicamentoCadastro,
         canActivate: [authGuard, perfilGuard],
         data: {
-          cargos: ['Coordenador', 'Enfermeiro(a)', 'Psicólogo(a)', 'Auxiliar administrativo'],
+          cargos: ['Coordenador', 'Cuidador(a)', 'Psicólogo(a)', 'Auxiliar administrativo'],
         },
         canDeactivate: [canDeactivateGuard],
       },
@@ -81,7 +82,7 @@ export const routes: Routes = [
         component: MedicamentoListagem,
         canActivate: [authGuard, perfilGuard],
         data: {
-          cargos: ['Coordenador', 'Enfermeiro(a)', 'Psicólogo(a)', 'Auxiliar administrativo'],
+          cargos: ['Coordenador', 'Cuidador(a)', 'Psicólogo(a)', 'Auxiliar administrativo'],
         },
       },
       {
@@ -89,7 +90,7 @@ export const routes: Routes = [
         component: MedicamentoEdicao,
         canActivate: [authGuard, perfilGuard],
         data: {
-          cargos: ['Coordenador', 'Enfermeiro(a)', 'Psicólogo(a)', 'Auxiliar administrativo'],
+          cargos: ['Coordenador', 'Cuidador(a)', 'Psicólogo(a)', 'Auxiliar administrativo'],
         },
         canDeactivate: [canDeactivateGuard],
       },
@@ -98,9 +99,17 @@ export const routes: Routes = [
         component: MedicamentoEstoque,
         canActivate: [authGuard, perfilGuard],
         data: {
-          cargos: ['Coordenador', 'Enfermeiro(a)', 'Psicólogo(a)'],
+          cargos: ['Coordenador', 'Cuidador(a)', 'Psicólogo(a)'],
         },
         canDeactivate: [canDeactivateGuard],
+      },
+      {
+        path: 'administracao',
+        component: MedicamentoAdministracao,
+        canActivate: [authGuard, perfilGuard],
+        data: {
+          cargos: ['Coordenador', 'Cuidador(a)', 'Psicólogo(a)', 'Auxiliar administrativo'],
+        },
       },
     ],
   },
@@ -121,14 +130,14 @@ export const routes: Routes = [
         component: AcolhidoListagem,
         canActivate: [authGuard, perfilGuard],
         data: {
-          cargos: ['Coordenador', 'Auxiliar Administrativo', 'Enfermeiro(a)', 'Psicólogo(a)'],
+          cargos: ['Coordenador', 'Auxiliar Administrativo', 'Cuidador(a)', 'Psicólogo(a)'],
         },
       },
       {
         path: 'edicao/:id',
         component: AcolhidoEdicao,
-        canActivate: [authGuard],
-        canDeactivate: [canDeactivateGuard, perfilGuard],
+        canActivate: [authGuard, perfilGuard],
+        canDeactivate: [canDeactivateGuard],
         data: {
           cargos: ['Coordenador', 'Auxiliar Administrativo', 'Psicólogo(a)'],
         },
@@ -136,7 +145,10 @@ export const routes: Routes = [
       {
         path: 'controle-medicamento/:id',
         component: MedicamentoControle,
-        canActivate: [authGuard],
+        canActivate: [authGuard, perfilGuard],
+        data: {
+          cargos: ['Coordenador', 'Cuidador(a)', 'Psicólogo(a)'],
+        },
         canDeactivate: [canDeactivateGuard],
       },
     ],
@@ -161,7 +173,7 @@ export const routes: Routes = [
             'Coordenador',
             'Psicólogo(a)',
             'Auxiliar administrativo',
-            'Enfermeiro(a)',
+            'Cuidador(a)',
             'Cozinheiro(a)',
             'Auxiliar de cozinha',
             'Auxiliar de serviços gerais',
@@ -201,7 +213,7 @@ export const routes: Routes = [
             'Coordenador',
             'Psicólogo(a)',
             'Auxiliar administrativo',
-            'Enfermeiro(a)',
+            'Cuidador(a)',
             'Cozinheiro(a)',
             'Auxiliar de cozinha',
             'Auxiliar de serviços gerais',
@@ -213,7 +225,7 @@ export const routes: Routes = [
         component: EdicaoEvento,
         canActivate: [authGuard, perfilGuard],
         data: {
-          cargos: ['Coordenador', 'Auxiliar administrativo', 'Psicólogo(a)', 'Enfermeiro(a)'],
+          cargos: ['Coordenador', 'Auxiliar administrativo', 'Psicólogo(a)', 'Cuidador(a)'],
         },
         canDeactivate: [canDeactivateGuard],
       },
@@ -222,7 +234,7 @@ export const routes: Routes = [
         component: EventoCadastro,
         canActivate: [authGuard, perfilGuard],
         data: {
-          cargos: ['Coordenador', 'Auxiliar administrativo', 'Psicólogo(a)', 'Enfermeiro(a)'],
+          cargos: ['Coordenador', 'Auxiliar administrativo', 'Psicólogo(a)', 'Cuidador(a)'],
         },
         canDeactivate: [canDeactivateGuard],
       },

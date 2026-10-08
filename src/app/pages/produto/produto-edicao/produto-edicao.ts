@@ -18,6 +18,7 @@ import Swal from 'sweetalert2';
   styleUrl: './produto-edicao.css',
 })
 export class ProdutoEdicao {
+  salvando = false;
   // Objeto do tipo produto
   produto: Produto = new Produto();
 
@@ -31,8 +32,23 @@ export class ProdutoEdicao {
 
   //Método de edição
   editar(): void {
-    this.servico.editar(this.produto).subscribe(() => {
-      this.toastr.success('Produto editado com sucesso!');
+    if (this.salvando) {
+      return;
+    }
+
+    this.salvando = true;
+
+    this.servico.editar(this.produto).subscribe({
+      next: () => {
+        this.salvando = false;
+        this.toastr.success('Produto editado com sucesso!');
+      },
+
+      error: (err) => {
+        this.salvando = false;
+        console.error('Erro ao editar produto:', err);
+        this.toastr.error(err.error?.message || 'Erro ao editar produto.', 'Erro');
+      },
     });
   }
 

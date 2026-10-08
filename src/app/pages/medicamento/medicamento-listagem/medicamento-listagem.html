@@ -60,7 +60,7 @@
                     <a [routerLink]="['/medicamento/edicao', m.id]" class="btn-editar"> Editar </a>
                   }
                   @if (temPermissao('medicamento:excluir')) {
-                    <button (click)="excluir(m.id!)" class="btn-excluir">Excluir</button>
+                    <button (click)="excluir(m.id!)" class="btn-excluir">Desabilitar</button>
                   }
                 </div>
               </td>

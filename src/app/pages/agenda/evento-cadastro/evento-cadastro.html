@@ -14,148 +14,162 @@
     </nav>
 
     <form #form="ngForm" (ngSubmit)="cadastrar(form)">
-      <!-- NOME -->
-      <div class="form-group">
-        <label>Nome do Evento <span>*</span></label>
-        <input
-          type="text"
-          name="nome"
-          [(ngModel)]="evento.nome"
-          required
-          class="form-control"
-          minlength="3"
-          #nome="ngModel"
-        />
-        @if (nome.touched) {
-          @if (nome.errors?.['required']) {
-            <small class="erro">Nome é obrigatório</small>
-          } @else if (nome.errors?.['minlength']) {
-            <small class="erro">Mínimo de 3 caracteres</small>
+      <fieldset [disabled]="salvando">
+        <!-- NOME -->
+        <div class="form-group">
+          <label>Nome do Evento <span>*</span></label>
+          <input
+            type="text"
+            name="nome"
+            [(ngModel)]="evento.nome"
+            required
+            class="form-control"
+            minlength="3"
+            #nome="ngModel"
+          />
+          @if (nome.touched) {
+            @if (nome.errors?.['required']) {
+              <small class="erro">Nome é obrigatório</small>
+            } @else if (nome.errors?.['minlength']) {
+              <small class="erro">Mínimo de 3 caracteres</small>
+            }
           }
+        </div>
+
+        <!-- DATA E HORA -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Data <span>*</span></label>
+            <input
+              type="date"
+              name="data"
+              [(ngModel)]="evento.data"
+              required
+              class="form-control"
+              #data="ngModel"
+            />
+            @if (data.invalid && data.touched) {
+              <small class="erro">Data é obrigatória</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Hora <span>*</span></label>
+            <input
+              type="time"
+              name="hora"
+              [(ngModel)]="evento.hora"
+              required
+              class="form-control"
+              #hora="ngModel"
+            />
+            @if (hora.invalid && hora.touched) {
+              <small class="erro">Hora é obrigatória</small>
+            }
+          </div>
+        </div>
+
+        <!-- RESPONSÁVEIS DO ABRIGO -->
+        <div class="form-group">
+          <label>Responsáveis <span>*</span></label>
+
+          <input
+            type="text"
+            placeholder="Buscar responsável..."
+            [(ngModel)]="filtroResponsavel"
+            name="filtroResponsavel"
+            class="form-control"
+            #responsavel="ngModel"
+          />
+
+          <div class="lista-responsaveis">
+            @for (r of filtrarResponsaveis(); track r.id) {
+              <div class="responsavel-item">
+                <input
+                  type="checkbox"
+                  [checked]="isResponsavelSelecionado(r.id!)"
+                  (change)="toggleResponsavel(r.id!)"
+                />
+                {{ r.nome }}
+              </div>
+            }
+          </div>
+        </div>
+
+        @if (responsavel.invalid && responsavel.touched) {
+          <small class="erro">Responsável é obrigatório</small>
         }
-      </div>
 
-      <!-- DATA E HORA -->
-      <div class="form-row">
+        <!-- DESCRIÇÃO -->
         <div class="form-group">
-          <label>Data <span>*</span></label>
-          <input
-            type="date"
-            name="data"
-            [(ngModel)]="evento.data"
+          <label>Descrição <span>*</span></label>
+          <textarea
+            name="descricao"
+            [(ngModel)]="evento.descricao"
             required
+            rows="4"
             class="form-control"
-            #data="ngModel"
-          />
-          @if (data.invalid && data.touched) {
-            <small class="erro">Data é obrigatória</small>
+            minlength="3"
+            #desc="ngModel"
+          ></textarea>
+          @if (desc.touched) {
+            @if (desc.errors?.['required']) {
+              <small class="erro">Nome é obrigatório</small>
+            } @else if (desc.errors?.['minlength']) {
+              <small class="erro">Mínimo de 3 caracteres</small>
+            }
           }
         </div>
 
+        <!-- ACOLHIDOS -->
         <div class="form-group">
-          <label>Hora <span>*</span></label>
+          <label>Acolhidos Participantes</label>
           <input
-            type="time"
-            name="hora"
-            [(ngModel)]="evento.hora"
-            required
+            type="text"
+            placeholder="Buscar acolhido..."
+            [(ngModel)]="filtroAcolhido"
+            name="filtroAcolhido"
             class="form-control"
-            #hora="ngModel"
           />
-          @if (hora.invalid && hora.touched) {
-            <small class="erro">Hora é obrigatória</small>
-          }
+
+          <div class="lista-acolhidos">
+            @for (a of filtrarAcolhidos(); track a.id) {
+              <div class="acolhido-item">
+                <input
+                  type="checkbox"
+                  [checked]="isAcolhidoSelecionado(a.id)"
+                  (change)="toggleAcolhido(a.id)"
+                />
+                {{ a.nome }}
+              </div>
+            }
+          </div>
         </div>
-      </div>
 
-      <!-- RESPONSÁVEIS DO ABRIGO -->
-      <div class="form-group">
-        <label>Responsáveis <span>*</span></label>
+        <!-- BOTÕES INFERIORES -->
+        <div class="botoes">
+          <button type="button" class="btn-voltar" [routerLink]="['/agenda/listagem']">
+            <b>Voltar</b>
+          </button>
 
-        <input
-          type="text"
-          placeholder="Buscar responsável..."
-          [(ngModel)]="filtroResponsavel"
-          name="filtroResponsavel"
-          class="form-control"
-          #responsavel="ngModel"
-        />
-
-        <div class="lista-responsaveis">
-          @for (r of filtrarResponsaveis(); track r.id) {
-            <div class="responsavel-item">
-              <input
-                type="checkbox"
-                [checked]="isResponsavelSelecionado(r.id!)"
-                (change)="toggleResponsavel(r.id!)"
-              />
-              {{ r.nome }}
-            </div>
-          }
+          <div class="botoes-direita">
+            <button type="reset" class="btn-limpar"><b>Limpar</b></button>
+            <button type="submit" class="btn" [disabled]="salvando || form.invalid">
+              @if (salvando) {
+                Salvando...
+              } @else {
+                Salvar
+              }
+            </button>
+          </div>
         </div>
-      </div>
-
-      @if (responsavel.invalid && responsavel.touched) {
-        <small class="erro">Responsável é obrigatório</small>
+      </fieldset>
+      @if (salvando) {
+        <div class="mensagem-salvando">
+          <span class="spinner"></span>
+          <span>Salvando, aguarde...</span>
+        </div>
       }
-
-      <!-- DESCRIÇÃO -->
-      <div class="form-group">
-        <label>Descrição <span>*</span></label>
-        <textarea
-          name="descricao"
-          [(ngModel)]="evento.descricao"
-          required
-          rows="4"
-          class="form-control"
-          minlength="3"
-          #desc="ngModel"
-        ></textarea>
-        @if (desc.touched) {
-          @if (desc.errors?.['required']) {
-            <small class="erro">Nome é obrigatório</small>
-          } @else if (desc.errors?.['minlength']) {
-            <small class="erro">Mínimo de 3 caracteres</small>
-          }
-        }
-      </div>
-
-      <!-- ACOLHIDOS -->
-      <div class="form-group">
-        <label>Acolhidos Participantes</label>
-        <input
-          type="text"
-          placeholder="Buscar acolhido..."
-          [(ngModel)]="filtroAcolhido"
-          name="filtroAcolhido"
-          class="form-control"
-        />
-
-        <div class="lista-acolhidos">
-          @for (a of filtrarAcolhidos(); track a.id) {
-            <div class="acolhido-item">
-              <input
-                type="checkbox"
-                [checked]="isAcolhidoSelecionado(a.id)"
-                (change)="toggleAcolhido(a.id)"
-              />
-              {{ a.nome }}
-            </div>
-          }
-        </div>
-      </div>
-
-      <!-- BOTÕES INFERIORES -->
-      <div class="botoes">
-        <button type="button" class="btn-voltar" [routerLink]="['/agenda/listagem']">
-          <b>Voltar</b>
-        </button>
-
-        <div class="botoes-direita">
-          <button type="reset" class="btn-limpar"><b>Limpar</b></button>
-          <button type="submit" class="btn-salvar" [disabled]="form.invalid"><b>Salvar</b></button>
-        </div>
-      </div>
     </form>
   </div>
 </div>

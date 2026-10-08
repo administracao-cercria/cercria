@@ -22,6 +22,7 @@ import Swal from 'sweetalert2';
   styleUrl: './evento-edicao.css',
 })
 export class EdicaoEvento implements OnInit {
+  salvando = false;
   // Criação de objetos
   evento: Evento = new Evento();
 
@@ -90,18 +91,29 @@ export class EdicaoEvento implements OnInit {
 
   // EDITAR
   editar(): void {
+    if (this.salvando) {
+      return;
+    }
+
     const eventoParaEnviar = {
       ...this.evento,
       data: this.evento.data ? this.evento.data + 'T12:00:00' : this.evento.data,
     };
 
+    this.salvando = true;
+
     this.eventoService.editar(eventoParaEnviar).subscribe({
       next: () => {
+        this.salvando = false;
+
         this.toastr.success('Evento editado com sucesso!');
         this.router.navigate(['/agenda/listagem']);
       },
-      error: () => {
-        this.toastr.error('Erro ao editar evento');
+
+      error: (err) => {
+        this.salvando = false;
+        console.error('Erro ao editar evento:', err);
+        this.toastr.error(err.error?.message || 'Erro ao editar evento');
       },
     });
   }

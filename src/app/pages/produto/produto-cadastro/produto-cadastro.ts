@@ -17,6 +17,7 @@ import Swal from 'sweetalert2';
   styleUrl: './produto-cadastro.css',
 })
 export class ProdutoCadastro {
+  salvando = false;
   //Lista para cadastro de produto
   produtos: Produto[] = [];
 
@@ -31,26 +32,38 @@ export class ProdutoCadastro {
   produto = new Produto();
 
   //Método de cadastro
-  cadastrar(form: any): void {
-    if (form.invalid) {
-      form.control.markAllAsTouched();
-      this.toastr.error('Preencha todos os campos obrigatórios corretamente!');
+  cadastrar(form: NgForm): void {
+    if (this.salvando) {
       return;
     }
 
+    if (form.invalid) {
+      form.control.markAllAsTouched();
+
+      this.toastr.error('Preencha todos os campos obrigatórios corretamente!');
+
+      return;
+    }
+
+    this.salvando = true;
+
     this.servico.cadastrar(this.produto).subscribe({
       next: (retorno) => {
+        this.salvando = false;
+
         this.produtos.push(retorno);
 
         this.produto = new Produto();
-        form.reset();
+        form.resetForm();
 
         this.toastr.success('Produto cadastrado com sucesso!');
         this.router.navigate(['/produto/listagem']);
       },
+
       error: (err) => {
-        console.error(err);
-        this.toastr.error('Erro ao cadastrar produto!');
+        this.salvando = false;
+        console.error('Erro ao cadastrar produto:', err);
+        this.toastr.error(err.error?.message || 'Erro ao cadastrar produto!');
       },
     });
   }

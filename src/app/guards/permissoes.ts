@@ -7,14 +7,14 @@ export const permissoes = {
   },
 
   medicamento: {
-    cadastrar: ['Coordenador', 'Enfermeiro(a)', 'Psicólogo(a)', 'Auxiliar administrativo'],
-    listar: ['Coordenador', 'Psicólogo(a)', 'Auxiliar administrativo', 'Enfermeiro(a)'],
-    editar: ['Coordenador', 'Enfermeiro(a)', 'Psicólogo(a)', 'Auxiliar administrativo'],
-    excluir: ['Coordenador', 'Enfermeiro(a)'],
+    cadastrar: ['Coordenador', 'Cuidador(a)', 'Psicólogo(a)', 'Auxiliar administrativo'],
+    listar: ['Coordenador', 'Psicólogo(a)', 'Auxiliar administrativo', 'Cuidador(a)'],
+    editar: ['Coordenador', 'Cuidador(a)', 'Psicólogo(a)', 'Auxiliar administrativo'],
+    excluir: ['Coordenador', 'Cuidador(a)'],
 
-    entrada: ['Coordenador', 'Enfermeiro(a)', 'Psicólogo(a)'],
-    saida: ['Coordenador', 'Enfermeiro(a)', 'Psicólogo(a)'],
-    administracao: ['Coordenador', 'Enfermeiro(a)', 'Psicólogo(a)'],
+    entrada: ['Coordenador', 'Cuidador(a)', 'Psicólogo(a)'],
+    saida: ['Coordenador', 'Cuidador(a)', 'Psicólogo(a)'],
+    administracao: ['Coordenador', 'Cuidador(a)', 'Psicólogo(a)'],
   },
 
   produto: {
@@ -23,7 +23,7 @@ export const permissoes = {
       'Coordenador',
       'Psicólogo(a)',
       'Auxiliar administrativo',
-      'Enfermeiro(a)',
+      'Cuidador(a)',
       'Cozinheiro(a)',
       'Auxiliar de cozinha',
       'Auxiliar de serviços gerais',
@@ -42,23 +42,23 @@ export const permissoes = {
   },
 
   evento: {
-    cadastrar: ['Coordenador', 'Auxiliar administrativo', 'Psicólogo(a)', 'Enfermeiro(a)'],
+    cadastrar: ['Coordenador', 'Auxiliar administrativo', 'Psicólogo(a)', 'Cuidador(a)'],
     listar: [
       'Coordenador',
       'Psicólogo(a)',
       'Auxiliar administrativo',
-      'Enfermeiro(a)',
+      'Cuidador(a)',
       'Cozinheiro(a)',
       'Auxiliar de cozinha',
       'Auxiliar de serviços gerais',
     ],
-    editar: ['Coordenador', 'Auxiliar administrativo', 'Psicólogo(a)', 'Enfermeiro(a)'],
-    excluir: ['Coordenador', 'Auxiliar administrativo', 'Psicólogo(a)', 'Enfermeiro(a)'],
+    editar: ['Coordenador', 'Auxiliar administrativo', 'Psicólogo(a)', 'Cuidador(a)'],
+    excluir: ['Coordenador', 'Auxiliar administrativo', 'Psicólogo(a)', 'Cuidador(a)'],
   },
 
   acolhido: {
     cadastrar: ['Coordenador', 'Psicólogo(a)', 'Auxiliar administrativo'],
-    listar: ['Coordenador', 'Psicólogo(a)', 'Auxiliar administrativo', 'Enfermeiro(a)'],
+    listar: ['Coordenador', 'Psicólogo(a)', 'Auxiliar administrativo', 'Cuidador(a)'],
     editar: ['Coordenador', 'Psicólogo(a)', 'Auxiliar administrativo'],
     excluir: ['Coordenador', 'Auxiliar administrativo'],
   },

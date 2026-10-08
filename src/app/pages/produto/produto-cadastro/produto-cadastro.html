@@ -2,8 +2,10 @@
 
 <div class="main-container">
   <app-sidebar></app-sidebar>
+
   <div class="form-list-panel">
     <h2><b>Cadastro de Produtos</b></h2>
+
     <!-- BREADCRUMB -->
     <nav class="breadcrumb">
       <a routerLink="/home">Home</a>
@@ -11,73 +13,99 @@
       <span>Cadastro de Produto</span>
     </nav>
 
-    <!-- FORMULÁRIO DE CADASTRO DE PRODUTO -->
+    <!-- FORMULÁRIO -->
     <form class="form-grid" #form="ngForm" (ngSubmit)="cadastrar(form)">
-      <!-- NOME -->
-      <div class="campo grande">
-        <label>Nome do produto <span>*</span></label>
-        <input
-          type="text"
-          name="nome"
-          placeholder="Digite o nome do produto"
-          minlength="3"
-          required
-          [(ngModel)]="produto.nome"
-          #nome="ngModel"
-        />
+      <fieldset [disabled]="salvando">
+        <!-- NOME -->
+        <div class="campo grande">
+          <label>Nome do produto <span>*</span></label>
 
-        @if (nome.touched) {
-          @if (nome.errors?.['required']) {
-            <small class="erro">Nome é obrigatório</small>
-          } @else if (nome.errors?.['minlength']) {
-            <small class="erro">Mínimo de 3 caracteres</small>
+          <input
+            type="text"
+            name="nome"
+            placeholder="Digite o nome do produto"
+            minlength="3"
+            required
+            [(ngModel)]="produto.nome"
+            #nome="ngModel"
+          />
+
+          @if (nome.touched) {
+            @if (nome.errors?.['required']) {
+              <small class="erro">Nome é obrigatório</small>
+            } @else if (nome.errors?.['minlength']) {
+              <small class="erro">Mínimo de 3 caracteres</small>
+            }
           }
-        }
-      </div>
+        </div>
 
-      <!-- CATEGORIA -->
-      <div class="campo">
-        <label>Categoria <span>*</span></label>
-        <select name="origem" required [(ngModel)]="produto.categoria" #categoria="ngModel">
-          <option value="">Selecione</option>
-          <option value="Leguminosas">Leguminosas</option>
-          <option value="Verduras">Verduras</option>
-          <option value="Frutas">Frutas</option>
-          <option value="Não perecíveis">Não perecíveis</option>
-          <option value="Bebidas">Bebidas</option>
-          <option value="Produtos de limpeza">Produtos de limpeza</option>
-          <option value="Produtos de higiene pessoal">Produtos de higiene pessoal</option>
-        </select>
+        <!-- CATEGORIA -->
+        <div class="campo">
+          <label>Categoria <span>*</span></label>
 
-        @if (categoria.invalid && categoria.touched) {
-          <small class="erro">Categoria é obrigatório</small>
-        }
-      </div>
+          <select name="origem" required [(ngModel)]="produto.categoria" #categoria="ngModel">
+            <option value="">Selecione</option>
+            <option value="Leguminosas">Leguminosas</option>
+            <option value="Verduras">Verduras</option>
+            <option value="Frutas">Frutas</option>
+            <option value="Não perecíveis">Não perecíveis</option>
+            <option value="Bebidas">Bebidas</option>
+            <option value="Produtos de limpeza">Produtos de limpeza</option>
+            <option value="Produtos de higiene pessoal">Produtos de higiene pessoal</option>
+          </select>
 
-      <!-- UNIDADE DE MEDIDA -->
-      <div class="campo">
-        <label>Unidade de medida <span>*</span></label>
-        <select name="origem" required [(ngModel)]="produto.unidadeMedida" #unidadeMedida="ngModel">
-          <option value="">Selecione</option>
-          <option value="Quilograma">Quilograma (Kg)</option>
-          <option value="Grama">Gramas (g)</option>
-          <option value="Litro">Litros (L)</option>
-          <option value="Mililitro">Mililitros (ml)</option>
-          <option value="Unidade">Unidade (Un)</option>
-          <option value="Caixa">Caixa (Cx)</option>
-        </select>
+          @if (categoria.invalid && categoria.touched) {
+            <small class="erro">Categoria é obrigatório</small>
+          }
+        </div>
 
-        @if (unidadeMedida.invalid && unidadeMedida.touched) {
-          <small class="erro">Unidade de medida é obrigatória</small>
-        }
-      </div>
+        <!-- UNIDADE DE MEDIDA -->
+        <div class="campo">
+          <label>Unidade de medida <span>*</span></label>
 
-      <!-- BOTÕES INFERIORES -->
-      <div class="form-buttons">
-        <button type="submit" class="btn" [disabled]="form.invalid">Salvar</button>
-        <button type="reset" class="btn">Limpar</button>
-        <a routerLink="/home" class="btn-voltar">Voltar</a>
-      </div>
+          <select
+            name="unidadeMedida"
+            required
+            [(ngModel)]="produto.unidadeMedida"
+            #unidadeMedida="ngModel"
+          >
+            <option value="">Selecione</option>
+            <option value="Quilograma">Quilograma (Kg)</option>
+            <option value="Grama">Gramas (g)</option>
+            <option value="Litro">Litros (L)</option>
+            <option value="Mililitro">Mililitros (ml)</option>
+            <option value="Unidade">Unidade (Un)</option>
+            <option value="Caixa">Caixa (Cx)</option>
+          </select>
+
+          @if (unidadeMedida.invalid && unidadeMedida.touched) {
+            <small class="erro"> Unidade de medida é obrigatória </small>
+          }
+        </div>
+
+        <!-- BOTÕES -->
+        <div class="form-buttons">
+          <button type="submit" class="btn" [disabled]="salvando || form.invalid">
+            @if (salvando) {
+              Salvando...
+            } @else {
+              Salvar
+            }
+          </button>
+
+          <button type="reset" class="btn">Limpar</button>
+
+          <a routerLink="/home" class="btn-voltar"> Voltar </a>
+        </div>
+      </fieldset>
+
+      <!-- MENSAGEM -->
+      @if (salvando) {
+        <div class="mensagem-salvando">
+          <span class="spinner"></span>
+          <span>Salvando, aguarde...</span>
+        </div>
+      }
     </form>
   </div>
 </div>

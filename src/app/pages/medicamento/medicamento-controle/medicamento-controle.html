@@ -41,215 +41,247 @@
             #formControleP="ngForm"
             (ngSubmit)="salvarProgramacao(formControleP)"
           >
-            <!-- MEDICAMENTO -->
-            <div class="campo">
-              <label>Medicamento <span class="asterisco">*</span></label>
+            <fieldset [disabled]="salvando">
+              <!-- MEDICAMENTO -->
+              <div class="campo">
+                <label>Medicamento <span class="asterisco">*</span></label>
 
-              <select
-                [(ngModel)]="novaProgramacao.medicamento.id"
-                name="medicamentoId"
-                #medicamentoProg="ngModel"
-                required
-              >
-                <option [ngValue]="null">Selecione</option>
+                <select
+                  [(ngModel)]="novaProgramacao.medicamento.id"
+                  name="medicamentoId"
+                  #medicamentoProg="ngModel"
+                  required
+                >
+                  <option [ngValue]="null">Selecione</option>
 
-                @for (m of medicamentos; track m.id) {
-                  <option [ngValue]="m.id">
-                    {{ m.nome }}
-                  </option>
+                  @for (m of medicamentos; track m.id) {
+                    <option [ngValue]="m.id">
+                      {{ m.nome }}
+                    </option>
+                  }
+                </select>
+
+                @if (medicamentoProg.touched && medicamentoProg.invalid) {
+                  <small class="erro">Medicamento é obrigatório</small>
                 }
-              </select>
+              </div>
 
-              @if (medicamentoProg.touched && medicamentoProg.invalid) {
-                <small class="erro">Medicamento é obrigatório</small>
-              }
-            </div>
+              <!-- DOSE -->
+              <div class="campo">
+                <label>Dose <span class="asterisco">*</span></label>
 
-            <!-- DOSE -->
-            <div class="campo">
-              <label>Dose <span class="asterisco">*</span></label>
+                <input
+                  type="number"
+                  min="1"
+                  step="1"
+                  [(ngModel)]="novaProgramacao.dose"
+                  name="dose"
+                  #doseProg="ngModel"
+                  required
+                />
 
-              <input
-                type="number"
-                min="1"
-                step="1"
-                [(ngModel)]="novaProgramacao.dose"
-                name="dose"
-                #doseProg="ngModel"
-                required
-              />
+                @if (doseProg.touched && doseProg.invalid) {
+                  <small class="erro">Dose é obrigatória</small>
+                }
+              </div>
 
-              @if (doseProg.touched && doseProg.invalid) {
-                <small class="erro">Dose é obrigatória</small>
-              }
-            </div>
+              <!-- FREQUÊNCIA -->
+              <div class="campo full">
+                <label>Frequência <span class="asterisco">*</span></label>
 
-            <!-- FREQUÊNCIA -->
-            <div class="campo full">
-              <label>Frequência <span class="asterisco">*</span></label>
+                <div class="frequencia-box">
+                  <!-- INTERVALO -->
+                  <div class="freq-row">
+                    <label class="radio-label">
+                      <input
+                        type="radio"
+                        name="frequencia"
+                        value="intervalo"
+                        [(ngModel)]="frequencia"
+                        (change)="alterarFrequencia()"
+                      />
 
-              <div class="frequencia-box">
-                <!-- INTERVALO -->
-                <div class="freq-row">
-                  <label class="radio-label">
-                    <input type="radio" name="frequencia" value="intervalo" />
-                    Intervalo
-                  </label>
+                      Intervalo
+                    </label>
 
-                  <div class="freq-inline">
-                    <span>A cada</span>
+                    <div class="freq-inline">
+                      <span>A cada</span>
 
-                    <select
-                      class="select-pequeno"
-                      [(ngModel)]="novaProgramacao.intervalo"
-                      name="intervalo"
-                    >
-                      @for (
-                        n of [
-                          1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-                          22, 23, 24,
-                        ];
-                        track n
-                      ) {
-                        <option [value]="n">{{ n }}</option>
-                      }
-                    </select>
+                      <select
+                        class="select-pequeno"
+                        [(ngModel)]="novaProgramacao.intervalo"
+                        name="intervalo"
+                        [disabled]="frequencia !== 'intervalo'"
+                      >
+                        @for (
+                          n of [
+                            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+                            21, 22, 23, 24,
+                          ];
+                          track n
+                        ) {
+                          <option [value]="n">{{ n }}</option>
+                        }
+                      </select>
 
-                    <span>horas</span>
+                      <span>horas</span>
+                    </div>
+
+                    <!-- INICIANDO EM -->
+                    <div class="freq-inline">
+                      <label>Iniciando em</label>
+
+                      <input
+                        type="time"
+                        class="input-pequeno"
+                        [(ngModel)]="novaProgramacao.iniciandoEm"
+                        name="iniciandoEm"
+                        [disabled]="frequencia !== 'intervalo'"
+                      />
+                    </div>
+
+                    <!-- VEZES AO DIA -->
+                    <div class="freq-inline">
+                      <label>Vezes ao dia</label>
+
+                      <select
+                        class="select-pequeno"
+                        [(ngModel)]="novaProgramacao.vezesAoDia"
+                        name="vezesDia"
+                        [disabled]="frequencia !== 'intervalo'"
+                      >
+                        @for (n of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track n) {
+                          <option [value]="n">{{ n }}</option>
+                        }
+                      </select>
+                    </div>
                   </div>
 
-                  <!-- INICIANDO EM -->
-                  <div class="freq-inline">
-                    <label>Iniciando em</label>
+                  <!-- HORÁRIO FIXO -->
+                  <div class="freq-row">
+                    <label class="radio-label">
+                      <input
+                        type="radio"
+                        name="frequencia"
+                        value="horarios"
+                        [(ngModel)]="frequencia"
+                        (change)="alterarFrequencia()"
+                      />
+
+                      Horário fixo
+                    </label>
 
                     <input
                       type="time"
                       class="input-pequeno"
-                      [(ngModel)]="novaProgramacao.iniciandoEm"
-                      name="iniciandoEm"
+                      [(ngModel)]="novaProgramacao.horarioFixo"
+                      name="horarioFixo2"
+                      [disabled]="frequencia !== 'horarios'"
                     />
                   </div>
-
-                  <!-- VEZES AO DIA -->
-                  <div class="freq-inline">
-                    <label>Vezes ao dia</label>
-
-                    <select
-                      class="select-pequeno"
-                      [(ngModel)]="novaProgramacao.vezesAoDia"
-                      name="vezesDia"
-                    >
-                      @for (n of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track n) {
-                        <option [value]="n">{{ n }}</option>
-                      }
-                    </select>
-                  </div>
-                </div>
-
-                <!-- HORÁRIO FIXO -->
-                <div class="freq-row">
-                  <label class="radio-label">
-                    <input type="radio" name="frequencia" value="horarios" />
-                    Horário fixo
-                  </label>
-
-                  <input
-                    type="time"
-                    class="input-pequeno"
-                    [(ngModel)]="novaProgramacao.horarioFixo"
-                    name="horarioFixo2"
-                  />
                 </div>
               </div>
-            </div>
 
-            <!-- DIAS -->
-            <div class="campo full">
-              <label>Dias da semana <span class="asterisco">*</span></label>
+              <!-- DIAS -->
+              <div class="campo full">
+                <label>Dias da semana <span class="asterisco">*</span></label>
 
-              <div class="dias-grid">
-                @for (dia of diasSemana; track dia) {
-                  <label class="dia-item">
-                    <input
-                      type="checkbox"
-                      [checked]="novaProgramacao.diasSemana.includes(dia)"
-                      (change)="toggleDia(dia)"
-                    />
+                <div class="dias-grid">
+                  @for (dia of diasSemana; track dia) {
+                    <label class="dia-item">
+                      <input
+                        type="checkbox"
+                        [checked]="novaProgramacao.diasSemana.includes(dia)"
+                        (change)="toggleDia(dia)"
+                      />
 
-                    <span>{{ dia }}</span>
-                  </label>
+                      <span>{{ dia }}</span>
+                    </label>
+                  }
+                </div>
+
+                @if (novaProgramacao.diasSemana.length === 0) {
+                  <small class="erro">Selecione ao menos um dia</small>
                 }
               </div>
 
-              @if (novaProgramacao.diasSemana.length === 0) {
-                <small class="erro">Selecione ao menos um dia</small>
-              }
-            </div>
+              <!-- USO CONTÍNUO -->
+              <div class="campo full">
+                <label class="check-inline">
+                  <input
+                    type="checkbox"
+                    [checked]="novaProgramacao.usoContinuo"
+                    (change)="toggleUsoContinuo()"
+                  />
 
-            <!-- USO CONTÍNUO -->
-            <div class="campo full">
-              <label class="check-inline">
+                  Uso contínuo
+                </label>
+              </div>
+
+              <!-- DATA INÍCIO -->
+              <div class="campo">
+                <label>Data de início <span class="asterisco">*</span></label>
+
                 <input
-                  type="checkbox"
-                  [checked]="novaProgramacao.usoContinuo"
-                  (change)="toggleUsoContinuo()"
+                  type="date"
+                  [(ngModel)]="novaProgramacao.dataInicio"
+                  name="dataInicio"
+                  #dtInicio="ngModel"
+                  required
                 />
 
-                Uso contínuo
-              </label>
-            </div>
+                @if (dtInicio.touched && dtInicio.invalid) {
+                  <small class="erro">Data de início é obrigatória</small>
+                }
+              </div>
 
-            <!-- DATA INÍCIO -->
-            <div class="campo">
-              <label>Data de início <span class="asterisco">*</span></label>
+              <!-- DATA FIM -->
+              <div class="campo">
+                <label>Data de fim</label>
 
-              <input
-                type="date"
-                [(ngModel)]="novaProgramacao.dataInicio"
-                name="dataInicio"
-                #dtInicio="ngModel"
-                required
-              />
+                <input
+                  type="date"
+                  [(ngModel)]="novaProgramacao.dataFim"
+                  name="dataFim"
+                  [disabled]="novaProgramacao.usoContinuo"
+                />
+              </div>
 
-              @if (dtInicio.touched && dtInicio.invalid) {
-                <small class="erro">Data de início é obrigatória</small>
-              }
-            </div>
+              <!-- OBS -->
+              <div class="campo full">
+                <label>Observação</label>
+                <textarea
+                  rows="3"
+                  [(ngModel)]="novaProgramacao.observacao"
+                  name="observacao"
+                ></textarea>
+              </div>
 
-            <!-- DATA FIM -->
-            <div class="campo">
-              <label>Data de fim</label>
+              <!-- BOTÕES -->
+              <div class="form-actions">
+                <button type="button" class="btn-limpar" (click)="limparProgramacao()">
+                  Limpar
+                </button>
+                <button
+                  type="submit"
+                  class="btn-salvar"
+                  [disabled]="salvando || formControleP.invalid"
+                >
+                  @if (salvando) {
+                    Salvando...
+                  } @else {
+                    Programar saída
+                  }
+                </button>
+              </div>
+            </fieldset>
 
-              <input
-                type="date"
-                [(ngModel)]="novaProgramacao.dataFim"
-                name="dataFim"
-                [disabled]="novaProgramacao.usoContinuo"
-              />
-            </div>
-
-            <!-- OBS -->
-            <div class="campo full">
-              <label>Observação</label>
-              <textarea
-                rows="3"
-                [(ngModel)]="novaProgramacao.observacao"
-                name="observacao"
-              ></textarea>
-            </div>
-
-            <!-- BOTÕES -->
-            <div class="form-actions">
-              <button type="button" class="btn-limpar" (click)="limparProgramacao()">Limpar</button>
-
-              <button
-                type="submit"
-                class="btn-salvar"
-                (ngSubmit)="salvarProgramacao(formControleP)"
-              >
-                Programar saída
-              </button>
-            </div>
+            @if (salvando) {
+              <div class="mensagem-salvando">
+                <span class="spinner"></span>
+                <span>Salvando, aguarde...</span>
+              </div>
+            }
           </form>
         </div>
       }
@@ -262,128 +294,140 @@
             #formControleE="ngForm"
             (ngSubmit)="salvarSaidaEsporadica(formControleE)"
           >
-            <!-- MEDICAMENTO -->
-            <div class="campo full">
-              <label>Medicamento <span class="asterisco">*</span></label>
+            <fieldset [disabled]="salvando">
+              <!-- MEDICAMENTO -->
+              <div class="campo full">
+                <label>Medicamento <span class="asterisco">*</span></label>
 
-              <select
-                [(ngModel)]="novaSaidaEsporadica.medicamentoId"
-                name="medicamentoEsporadico"
-                #medicamentoEsp="ngModel"
-                required
-              >
-                <option [ngValue]="null">Selecione</option>
+                <select
+                  [(ngModel)]="novaSaidaEsporadica.medicamentoId"
+                  name="medicamentoEsporadico"
+                  #medicamentoEsp="ngModel"
+                  required
+                >
+                  <option [ngValue]="null">Selecione</option>
 
-                @for (m of medicamentos; track m.id) {
-                  <option [ngValue]="m.id">
-                    {{ m.nome }}
-                  </option>
+                  @for (m of medicamentos; track m.id) {
+                    <option [ngValue]="m.id">
+                      {{ m.nome }}
+                    </option>
+                  }
+                </select>
+
+                @if (medicamentoEsp.touched && medicamentoEsp.invalid) {
+                  <small class="erro">Medicamento é obrigatório</small>
                 }
-              </select>
+              </div>
 
-              @if (medicamentoEsp.touched && medicamentoEsp.invalid) {
-                <small class="erro">Medicamento é obrigatório</small>
-              }
-            </div>
+              <!-- DATA -->
+              <div class="campo">
+                <label>Data de saída <span class="asterisco">*</span></label>
 
-            <!-- DATA -->
-            <div class="campo">
-              <label>Data de saída <span class="asterisco">*</span></label>
+                <input
+                  type="date"
+                  [(ngModel)]="novaSaidaEsporadica.dataSaida"
+                  name="dataSaida"
+                  #dtSaida="ngModel"
+                  required
+                />
 
-              <input
-                type="date"
-                [(ngModel)]="novaSaidaEsporadica.dataSaida"
-                name="dataSaida"
-                #dtSaida="ngModel"
-                required
-              />
-
-              @if (dtSaida.touched && dtSaida.invalid) {
-                <small class="erro">Data de saída é obrigatória</small>
-              }
-            </div>
-
-            <!-- HORÁRIO -->
-            <div class="campo">
-              <label>Horário <span class="asterisco">*</span></label>
-
-              <input
-                type="time"
-                [(ngModel)]="novaSaidaEsporadica.horario"
-                name="horario"
-                #hora="ngModel"
-                required
-              />
-
-              @if (hora.touched && hora.invalid) {
-                <small class="erro">Hora é obrigatória</small>
-              }
-            </div>
-
-            <!-- DOSE -->
-            <div class="campo">
-              <label>Dose <span class="asterisco">*</span></label>
-
-              <input
-                type="number"
-                min="1"
-                max="10"
-                step="1"
-                [(ngModel)]="novaSaidaEsporadica.dose"
-                name="doseEsporadica"
-                #doseEsp="ngModel"
-                required
-              />
-
-              @if (doseEsp.touched && doseEsp.invalid) {
-                <small class="erro">Dose é obrigatória</small>
-              }
-            </div>
-
-            <!-- RESPONSÁVEL -->
-            <div class="campo">
-              <label>Responsável</label>
-
-              <select [(ngModel)]="novaSaidaEsporadica.responsavel" name="responsavel">
-                @for (f of funcionarios; track f.id) {
-                  <option [ngValue]="{ id: f.id }">
-                    {{ f.nome }}
-                  </option>
+                @if (dtSaida.touched && dtSaida.invalid) {
+                  <small class="erro">Data de saída é obrigatória</small>
                 }
-              </select>
-            </div>
+              </div>
 
-            <!-- MOTIVO -->
-            <div class="campo full">
-              <label>Motivo <span class="asterisco">*</span></label>
+              <!-- HORÁRIO -->
+              <div class="campo">
+                <label>Horário <span class="asterisco">*</span></label>
 
-              <textarea
-                rows="4"
-                [(ngModel)]="novaSaidaEsporadica.motivo"
-                name="motivo"
-                #motivo="ngModel"
-                required
-              ></textarea>
+                <input
+                  type="time"
+                  [(ngModel)]="novaSaidaEsporadica.horario"
+                  name="horario"
+                  #hora="ngModel"
+                  required
+                />
 
-              @if (motivo.touched && motivo.invalid) {
-                <small class="erro">Motivo é obrigatório</small>
-              }
-            </div>
+                @if (hora.touched && hora.invalid) {
+                  <small class="erro">Hora é obrigatória</small>
+                }
+              </div>
 
-            <!-- BOTÕES -->
-            <div class="form-actions">
-              <button type="button" class="btn-limpar" (click)="limparSaidaEsporadica()">
-                Limpar
-              </button>
+              <!-- DOSE -->
+              <div class="campo">
+                <label>Dose <span class="asterisco">*</span></label>
 
-              <button
-                type="submit"
-                class="btn-salvar"
-                (ngSubmit)="salvarSaidaEsporadica(formControleE)"
-              >
-                Registrar saída
-              </button>
-            </div>
+                <input
+                  type="number"
+                  min="1"
+                  max="10"
+                  step="1"
+                  [(ngModel)]="novaSaidaEsporadica.dose"
+                  name="doseEsporadica"
+                  #doseEsp="ngModel"
+                  required
+                />
+
+                @if (doseEsp.touched && doseEsp.invalid) {
+                  <small class="erro">Dose é obrigatória</small>
+                }
+              </div>
+
+              <!-- RESPONSÁVEL -->
+              <div class="campo">
+                <label>Responsável</label>
+
+                <select [(ngModel)]="novaSaidaEsporadica.responsavel" name="responsavel">
+                  @for (f of funcionarios; track f.id) {
+                    <option [ngValue]="{ id: f.id }">
+                      {{ f.nome }}
+                    </option>
+                  }
+                </select>
+              </div>
+
+              <!-- MOTIVO -->
+              <div class="campo full">
+                <label>Motivo <span class="asterisco">*</span></label>
+
+                <textarea
+                  rows="4"
+                  [(ngModel)]="novaSaidaEsporadica.motivo"
+                  name="motivo"
+                  #motivo="ngModel"
+                  required
+                ></textarea>
+
+                @if (motivo.touched && motivo.invalid) {
+                  <small class="erro">Motivo é obrigatório</small>
+                }
+              </div>
+
+              <!-- BOTÕES -->
+              <div class="form-actions">
+                <button type="button" class="btn-limpar" (click)="limparSaidaEsporadica()">
+                  Limpar
+                </button>
+                <button
+                  type="submit"
+                  class="btn-salvar"
+                  [disabled]="salvando || formControleE.invalid"
+                >
+                  @if (salvando) {
+                    Salvando...
+                  } @else {
+                    Registrar saída
+                  }
+                </button>
+              </div>
+            </fieldset>
+
+            @if (salvando) {
+              <div class="mensagem-salvando">
+                <span class="spinner"></span>
+                <span>Salvando, aguarde...</span>
+              </div>
+            }
           </form>
         </div>
       }

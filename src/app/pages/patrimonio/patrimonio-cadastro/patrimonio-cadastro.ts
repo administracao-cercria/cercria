@@ -17,6 +17,7 @@ import Swal from 'sweetalert2';
   styleUrl: './patrimonio-cadastro.css',
 })
 export class PatrimonioCadastro {
+  salvando = false;
   //Lista para cadastro de patrimônio
   patrimonios: Patrimonio[] = [];
 
@@ -30,26 +31,38 @@ export class PatrimonioCadastro {
   patrimonio = new Patrimonio();
 
   //Método de cadastro
-  cadastrar(form: any): void {
-    if (form.invalid) {
-      form.control.markAllAsTouched();
-      this.toastr.error('Preencha todos os campos obrigatórios corretamente!');
+  cadastrar(form: NgForm): void {
+    if (this.salvando) {
       return;
     }
 
+    if (form.invalid) {
+      form.control.markAllAsTouched();
+
+      this.toastr.error('Preencha todos os campos obrigatórios corretamente!');
+
+      return;
+    }
+
+    this.salvando = true;
+
     this.servico.cadastrar(this.patrimonio).subscribe({
       next: (retorno) => {
-        this.patrimonios.push(retorno);
+        this.salvando = false;
 
+        this.patrimonios.push(retorno);
         this.patrimonio = new Patrimonio();
-        form.reset();
+        form.resetForm();
 
         this.toastr.success('Patrimônio cadastrado com sucesso!');
+
         this.router.navigate(['/patrimonio/listagem']);
       },
+
       error: (err) => {
-        console.error(err);
-        this.toastr.error('Erro ao cadastrar patrimônio!');
+        this.salvando = false;
+        console.error('Erro ao cadastrar patrimônio:', err);
+        this.toastr.error(err.error?.message || 'Erro ao cadastrar patrimônio!');
       },
     });
   }

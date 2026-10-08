@@ -1,0 +1,189 @@
+<app-header></app-header>
+
+<div class="main-container">
+  <app-sidebar></app-sidebar>
+
+  <main class="page-content">
+    <div class="page-header">
+      <div>
+        <h1>Administração de medicamentos</h1>
+
+        <p>Controle das administrações de medicamentos dos acolhidos.</p>
+      </div>
+    </div>
+
+    <!-- FILTROS -->
+
+    <section class="filtros-card">
+      <div class="filtros-header">
+        <div>
+          <h2>Filtrar administrações</h2>
+          <span> Consulte os medicamentos previstos para o dia. </span>
+        </div>
+      </div>
+
+      <div class="filtros-grid">
+        <div class="campo">
+          <label for="acolhido"> Acolhido </label>
+
+          <select id="acolhido" [(ngModel)]="acolhidoSelecionado" (change)="filtrarAgendas()">
+            <option value="">Todos os acolhidos</option>
+
+            @for (acolhido of acolhidos; track acolhido.id) {
+              <option [value]="acolhido.nome">
+                {{ acolhido.nome }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <div class="campo campo-botao">
+          <button type="button" class="btn-limpar" (click)="limparFiltros()">Limpar filtros</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CARDS DE RESUMO -->
+
+    <section class="resumo-grid">
+      <div class="resumo-card">
+        <div class="resumo-icone pendente">⏱</div>
+
+        <div>
+          <span>Pendentes</span>
+          <strong>{{ quantidadePendentes }}</strong>
+        </div>
+      </div>
+
+      <div class="resumo-card">
+        <div class="resumo-icone dado">✓</div>
+
+        <div>
+          <span>Administrados</span>
+          <strong>{{ quantidadeDados }}</strong>
+        </div>
+      </div>
+
+      <div class="resumo-card">
+        <div class="resumo-icone nao-tomou">!</div>
+
+        <div>
+          <span>Não tomados</span>
+          <strong>{{ quantidadeNaoTomados }}</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- LISTAGEM -->
+
+    <section class="tabela-card">
+      <div class="tabela-header">
+        <div>
+          <h2>Administrações</h2>
+
+          <span>
+            {{ agendasFiltradas.length }}
+            registro(s) encontrado(s)
+          </span>
+        </div>
+      </div>
+
+      @if (carregando) {
+        <div class="estado">
+          <div class="spinner"></div>
+
+          <p>Carregando administrações...</p>
+        </div>
+      } @else if (agendasFiltradas.length === 0) {
+        <div class="estado vazio">
+          <h3>Nenhuma administração encontrada</h3>
+          <p>Não existem medicamentos previstos para os filtros selecionados.</p>
+        </div>
+      } @else {
+        <div class="tabela-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Horário</th>
+                <th>Acolhido</th>
+                <th>Medicamento</th>
+                <th>Dose</th>
+                <th>Status</th>
+                <th>Observação</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (agenda of agendasFiltradas; track agenda.id) {
+                <tr>
+                  <td class="horario">
+                    {{ agenda.horario || '--:--' }}
+                  </td>
+
+                  <td>
+                    <strong>
+                      {{ agenda.acolhido?.nome || 'Não informado' }}
+                    </strong>
+                  </td>
+
+                  <td>
+                    <div class="medicamento-info">
+                      <strong>
+                        {{ agenda.medicamento?.nome || 'Não informado' }}
+                      </strong>
+
+                      @if (agenda.medicamento?.categoria) {
+                        <small>
+                          {{ agenda.medicamento.categoria }}
+                        </small>
+                      }
+                    </div>
+                  </td>
+
+                  <td>
+                    {{ agenda.dose ?? '-' }}
+                  </td>
+
+                  <td>
+                    <span class="status" [ngClass]="classeStatus(agenda.status)">
+                      {{ textoStatus(agenda.status) }}
+                    </span>
+                  </td>
+
+                  <td>
+                    @if (agenda.status === 'NAO_TOMOU') {
+                      <span class="motivo">
+                        {{ agenda.motivoNaoTomou || '--' }}
+                      </span>
+                    } @else {
+                      <span class="observacao">
+                        {{ agenda.observacao || '--' }}
+                      </span>
+                    }
+                  </td>
+
+                  <td>
+                    @if (isPendente(agenda)) {
+                      <div class="acoes">
+                        <button type="button" class="btn-administrar" (click)="administrar(agenda)">
+                          Administrar
+                        </button>
+
+                        <button type="button" class="btn-nao-tomou" (click)="naoTomou(agenda)">
+                          Não tomou
+                        </button>
+                      </div>
+                    } @else {
+                      <span class="finalizado"> Registro finalizado </span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  </main>
+</div>

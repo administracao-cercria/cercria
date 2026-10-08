@@ -18,6 +18,9 @@ import Swal from 'sweetalert2';
   styleUrl: './acolhido-cadastro.css',
 })
 export class AcolhidoCadastro {
+  salvando = false;
+  dataAtual: string = new Date().toISOString().split('T')[0];
+
   //Lista para cadastro dos acolhidos, do tipo Acolhido
   acolhidos: Acolhido[] = [];
 
@@ -34,6 +37,11 @@ export class AcolhidoCadastro {
 
   //Método de cadastro
   cadastrar(form: NgForm): void {
+    // Impede duplo clique
+    if (this.salvando) {
+      return;
+    }
+
     // Impede o cadastro se houver qualquer erro no formulário
     if (form.invalid) {
       form.control.markAllAsTouched();
@@ -49,18 +57,24 @@ export class AcolhidoCadastro {
     // Define se o acolhido está ativo
     this.acolhido.ativo = !this.acolhido.dataSaida;
 
+    this.salvando = true;
+
     this.servico.cadastrar(this.acolhido).subscribe({
       next: (retorno) => {
+        this.salvando = false;
+
         this.acolhidos.push(retorno);
         this.acolhido = new Acolhido();
+
         form.resetForm();
+
         this.toastr.success('Acolhido cadastrado com sucesso!');
         this.router.navigate(['/acolhido/listagem']);
       },
 
       error: (err) => {
+        this.salvando = false;
         console.error('Erro ao cadastrar acolhido:', err);
-
         this.toastr.error(err.error?.message || 'Erro ao cadastrar acolhido.', 'Erro');
       },
     });

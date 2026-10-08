@@ -18,6 +18,7 @@ import Swal from 'sweetalert2';
   styleUrl: './funcionario-cadastro.css',
 })
 export class FuncionarioCadastro {
+  salvando = false;
   //JSON de funcionario
   funcionarios: Funcionario[] = [];
 
@@ -40,6 +41,11 @@ export class FuncionarioCadastro {
 
   //Método de cadastro
   cadastrar(form: NgForm): void {
+    // Impede duplo clique
+    if (this.salvando) {
+      return;
+    }
+
     // Verifica se o formulário possui erros
     if (form.invalid) {
       form.control.markAllAsTouched();
@@ -55,15 +61,19 @@ export class FuncionarioCadastro {
     // Verifica se as senhas são iguais
     if (this.funcionario.senha !== this.confirmarSenha) {
       this.toastr.error('As senhas não coincidem!', 'Erro');
-
       return;
     }
 
     // Define se o funcionário está ativo
     this.funcionario.ativo = !this.funcionario.dataSaida;
 
+    // Só bloqueia o botão depois que todas as validações passaram
+    this.salvando = true;
+
     this.servico.cadastrar(this.funcionario).subscribe({
       next: (retorno) => {
+        this.salvando = false;
+
         this.funcionarios.push(retorno);
         this.funcionario = new Funcionario();
         this.confirmarSenha = '';
@@ -75,6 +85,8 @@ export class FuncionarioCadastro {
       },
 
       error: (err) => {
+        this.salvando = false;
+
         console.error('Erro ao cadastrar funcionário:', err);
 
         if (err.status === 409) {
@@ -104,5 +116,11 @@ export class FuncionarioCadastro {
       confirmButtonText: 'Sim, sair',
       cancelButtonText: 'Continuar editando',
     }).then((result) => result.isConfirmed);
+  }
+
+  alterarTipoFuncionario(tipo: string): void {
+    if (tipo === 'Efetivo') {
+      this.funcionario.dataFimContrato = '';
+    }
   }
 }

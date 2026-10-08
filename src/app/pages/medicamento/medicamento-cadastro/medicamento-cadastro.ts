@@ -17,6 +17,7 @@ import Swal from 'sweetalert2';
   styleUrl: './medicamento-cadastro.css',
 })
 export class MedicamentoCadastro {
+  salvando = false;
   //Lista para o cadastro de medicamentos
   medicamentos: Medicamento[] = [];
 
@@ -32,6 +33,11 @@ export class MedicamentoCadastro {
 
   //Método de cadastro
   cadastrar(form: NgForm): void {
+    // Impede duplo clique
+    if (this.salvando) {
+      return;
+    }
+
     // Verifica se o formulário possui erros
     if (form.invalid) {
       form.control.markAllAsTouched();
@@ -44,17 +50,25 @@ export class MedicamentoCadastro {
       return;
     }
 
+    // Só bloqueia depois que as validações passaram
+    this.salvando = true;
+
     this.servico.cadastrar(this.medicamento).subscribe({
       next: (retorno) => {
+        this.salvando = false;
+
         this.medicamentos.push(retorno);
         this.medicamento = new Medicamento();
         form.resetForm();
 
         this.toastr.success('Medicamento cadastrado com sucesso!', 'Sucesso');
+
         this.router.navigate(['/medicamento/listagem']);
       },
 
       error: (err) => {
+        this.salvando = false;
+
         console.error('Erro ao cadastrar medicamento:', err);
 
         this.toastr.error(err.error?.message || 'Erro ao cadastrar medicamento.', 'Erro');

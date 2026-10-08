@@ -67,7 +67,7 @@
                     <a [routerLink]="['/acolhido/edicao', a.id]" class="btn"> Editar </a>
                   }
                   @if (temPermissao('acolhido:excluir')) {
-                    <a class="btn-excluir" (click)="excluir(a.id)"> Excluir </a>
+                    <a class="btn-excluir" (click)="excluir(a.id)"> Desacolher </a>
                   }
                 </div>
               </td>

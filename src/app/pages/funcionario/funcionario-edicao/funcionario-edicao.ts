@@ -19,6 +19,7 @@ import Swal from 'sweetalert2';
   styleUrl: './funcionario-edicao.css',
 })
 export class FuncionarioEdicao implements OnInit {
+  salvando = false;
   // Objeto do tipo funcionário
   funcionario: Funcionario = new Funcionario();
 
@@ -33,9 +34,28 @@ export class FuncionarioEdicao implements OnInit {
 
   //Método de edição
   editar(): void {
-    this.servico.editar(this.funcionario).subscribe(() => {
-      this.funcionario.ativo = !this.funcionario.dataSaida;
-      this.toastr.success('Funcionário editado com sucesso!');
+    if (this.salvando) {
+      return;
+    }
+
+    this.salvando = true;
+
+    this.servico.editar(this.funcionario).subscribe({
+      next: () => {
+        this.salvando = false;
+
+        this.funcionario.ativo = !this.funcionario.dataSaida;
+
+        this.toastr.success('Funcionário editado com sucesso!');
+      },
+
+      error: (err) => {
+        this.salvando = false;
+
+        console.error('Erro ao editar funcionário:', err);
+
+        this.toastr.error(err.error?.message || 'Erro ao editar funcionário.', 'Erro');
+      },
     });
   }
 
@@ -82,5 +102,11 @@ export class FuncionarioEdicao implements OnInit {
       confirmButtonText: 'Sim, sair',
       cancelButtonText: 'Continuar editando',
     }).then((result) => result.isConfirmed);
+  }
+
+  alterarTipoFuncionario(tipo: string): void {
+    if (tipo === 'Efetivo') {
+      this.funcionario.dataFimContrato = '';
+    }
   }
 }

@@ -21,6 +21,8 @@ import Swal from 'sweetalert2';
   styleUrl: './produto-controle.css',
 })
 export class ProdutoControle implements OnInit {
+  salvandoEntrada = false;
+  salvandoSaida = false;
   constructor(
     //private cdr: ChangeDetectorRef,
     private toastr: ToastrService,
@@ -118,34 +120,55 @@ export class ProdutoControle implements OnInit {
 
   // Método de salvar entrada
   salvarEntrada(form: NgForm): void {
+    if (this.salvandoEntrada) {
+      return;
+    }
+
     const payload = this.montarPayloadEntrada();
-    //console.log('ENTRADA:', payload);
+
+    this.salvandoEntrada = true;
 
     this.controleService.cadastrarEntrada(payload).subscribe({
       next: () => {
+        this.salvandoEntrada = false;
+
         this.toastr.success('Entrada cadastrada com sucesso!');
         form.resetForm();
+        this.limparEntrada();
       },
+
       error: (err) => {
-        console.error(err);
-        this.toastr.error('Erro ao cadastrar entrada.');
+        this.salvandoEntrada = false;
+        console.error('Erro ao cadastrar entrada:', err);
+        this.toastr.error(err.error?.message || 'Erro ao cadastrar entrada.');
       },
     });
   }
 
   //Método de salvar saída
   salvarSaida(form: NgForm): void {
+    if (this.salvandoSaida) {
+      return;
+    }
+
     const payload = this.montarPayloadSaida();
-    //console.log('SAÍDA:', payload);
+
+    this.salvandoSaida = true;
 
     this.controleService.cadastrarSaida(payload).subscribe({
       next: () => {
+        this.salvandoSaida = false;
+
         this.toastr.success('Saída cadastrada com sucesso!');
         form.resetForm();
+        this.limparSaida();
       },
+
       error: (err) => {
-        console.error(err);
-        this.toastr.error('Erro ao cadastrar saída.');
+        this.salvandoSaida = false;
+        console.error('Erro ao cadastrar saída:', err);
+
+        this.toastr.error(err.error?.message || 'Erro ao cadastrar saída.');
       },
     });
   }
