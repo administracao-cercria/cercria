@@ -149,12 +149,13 @@
         <!-- BOTÕES INFERIORES -->
         <div class="botoes">
           <button type="button" class="btn-voltar" [routerLink]="['/agenda/listagem']">
-            <b>Voltar</b>
+            Voltar
           </button>
 
           <div class="botoes-direita">
-            <button type="reset" class="btn-limpar"><b>Limpar</b></button>
-            <button type="submit" class="btn" [disabled]="salvando || form.invalid">
+            <button type="reset" class="btn-limpar" [disabled]="salvando">Limpar</button>
+
+            <button type="submit" class="btn-salvar" [disabled]="salvando || form.invalid">
               @if (salvando) {
                 Salvando...
               } @else {
@@ -164,12 +165,6 @@
           </div>
         </div>
       </fieldset>
-      @if (salvando) {
-        <div class="mensagem-salvando">
-          <span class="spinner"></span>
-          <span>Salvando, aguarde...</span>
-        </div>
-      }
     </form>
   </div>
 </div>

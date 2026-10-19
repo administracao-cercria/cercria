@@ -132,19 +132,18 @@ export class EventoCadastro {
       );
   }
 
-  //  Filtro de Responsáveis
+  // Filtro de Responsáveis
   filtroResponsavel: string = '';
 
   filtrarResponsaveis(): Funcionario[] {
-    const lista = this.responsaveis();
+    const filtro = String(this.filtroResponsavel ?? '')
+      .trim()
+      .toLowerCase();
 
-    return lista
-      .filter((r) => !r.dataSaida)
-      .filter((r) =>
-        this.filtroResponsavel.trim()
-          ? r.nome.toLowerCase().includes(this.filtroResponsavel.toLowerCase())
-          : true,
-      );
+    return this.responsaveis().filter((r: Funcionario) => {
+      const nome = String(r.nome ?? '').toLowerCase();
+      return nome.includes(filtro);
+    });
   }
 
   // Seleção/Deseleção de Acolhidos

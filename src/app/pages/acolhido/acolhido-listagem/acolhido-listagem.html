@@ -49,29 +49,42 @@
           </tr>
         </thead>
         <!-- LINHAS DOS REGISTROS DE ACORDO COM O FILTRO APLICADO -->
-        <tbody>
-          @for (a of acolhidosPaginados(); track a.id) {
-            <tr>
-              <td (click)="abrirDetalhes(a)" class="nome-click">
-                {{ a.nome }}
-              </td>
 
-              <td>
-                <div class="buttons">
-                  @if (temPermissao('medicamento:administracao')) {
-                    <a [routerLink]="['/acolhido/controle-medicamento', a.id]" class="btn"
-                      >Medicação</a
-                    >
-                  }
-                  @if (temPermissao('acolhido:editar')) {
-                    <a [routerLink]="['/acolhido/edicao', a.id]" class="btn"> Editar </a>
-                  }
-                  @if (temPermissao('acolhido:excluir')) {
-                    <a class="btn-excluir" (click)="excluir(a.id)"> Desacolher </a>
-                  }
-                </div>
+        <tbody>
+          @if (carregando) {
+            <tr>
+              <td colspan="2" class="estado-tabela">
+                <span class="spinner"></span>
+                Carregando acolhidos...
               </td>
             </tr>
+          } @else if (acolhidosPaginados().length === 0) {
+            <tr>
+              <td colspan="2" class="estado-tabela">Nenhum acolhido encontrado.</td>
+            </tr>
+          } @else {
+            @for (a of acolhidosPaginados(); track a.id) {
+              <tr>
+                <td (click)="abrirDetalhes(a)" class="nome-click">
+                  {{ a.nome }}
+                </td>
+                <td>
+                  <div class="buttons">
+                    @if (temPermissao('medicamento:administracao')) {
+                      <a [routerLink]="['/acolhido/controle-medicamento', a.id]" class="btn">
+                        Medicação
+                      </a>
+                    }
+                    @if (temPermissao('acolhido:editar')) {
+                      <a [routerLink]="['/acolhido/edicao', a.id]" class="btn">Editar</a>
+                    }
+                    @if (temPermissao('acolhido:excluir')) {
+                      <a class="btn-excluir" (click)="excluir(a.id)">Desacolher</a>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
           }
         </tbody>
       </table>

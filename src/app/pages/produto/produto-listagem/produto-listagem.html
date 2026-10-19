@@ -53,30 +53,43 @@
             <th>Ações</th>
           </tr>
         </thead>
+
         <tbody>
-          <!-- REGISTROS FILTRADOS DE PRODUTOS -->
-          @for (p of produtosPaginados(); track p.id) {
+          @if (carregando) {
             <tr>
-              <td (click)="abrirDetalhes(p)" class="nome-click">
-                {{ p.nome }}
-              </td>
-              <td (click)="abrirDetalhes(p)" class="nome-click">
-                {{ quantidades[p.id] || 0 }}
-              </td>
-              <td (click)="abrirDetalhes(p)" class="nome-click">
-                {{ p.categoria }}
-              </td>
-              <td>
-                <div class="buttons">
-                  @if (temPermissao('produto:editar')) {
-                    <a [routerLink]="['/produto/edicao', p.id]" class="btn">Editar</a>
-                  }
-                  @if (temPermissao('produto:excluir')) {
-                    <button (click)="excluir(p.id!)" class="btn-excluir">Desabilitar</button>
-                  }
-                </div>
+              <td colspan="4" class="estado-tabela">
+                <span class="spinner"></span>
+                Carregando produtos...
               </td>
             </tr>
+          } @else if (produtosPaginados().length === 0) {
+            <tr>
+              <td colspan="4" class="estado-tabela">Nenhum produto encontrado.</td>
+            </tr>
+          } @else {
+            @for (p of produtosPaginados(); track p.id) {
+              <tr>
+                <td (click)="abrirDetalhes(p)" class="nome-click">
+                  {{ p.nome }}
+                </td>
+                <td (click)="abrirDetalhes(p)" class="nome-click">
+                  {{ quantidades[p.id] || 0 }}
+                </td>
+                <td (click)="abrirDetalhes(p)" class="nome-click">
+                  {{ p.categoria }}
+                </td>
+                <td>
+                  <div class="buttons">
+                    @if (temPermissao('produto:editar')) {
+                      <a [routerLink]="['/produto/edicao', p.id]" class="btn">Editar</a>
+                    }
+                    @if (temPermissao('produto:excluir')) {
+                      <button (click)="excluir(p.id!)" class="btn-excluir">Desabilitar</button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
           }
         </tbody>
       </table>

@@ -198,25 +198,25 @@ export class EventoListagem implements OnInit, AfterViewInit {
   //Método excluir
   excluir(id: number): void {
     Swal.fire({
-      title: 'Excluir evento?',
+      title: 'Desabilitar evento?',
       text: 'Essa ação não poderá ser revertida.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
       cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Excluir',
+      confirmButtonText: 'Desabilitar',
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
         this.eventoService.remover(id).subscribe({
           next: () => {
-            this.toastr.success('Evento excluído com sucesso!');
+            this.toastr.success('Evento desabilitado com sucesso!');
             this.fecharPopup();
             this.carregarEventos();
           },
           error: (err) => {
             console.error(err);
-            this.toastr.error('Erro ao excluir evento.');
+            this.toastr.error('Erro ao desabilitar evento.');
           },
         });
       }

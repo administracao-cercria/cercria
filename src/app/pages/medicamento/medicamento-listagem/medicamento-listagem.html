@@ -39,32 +39,53 @@
             <th>Ações</th>
           </tr>
         </thead>
+
         <tbody>
-          <!-- REGISTROS DE MEDICAMENTOS FILTRADOS -->
-          @for (m of medicamentosPaginados(); track m.id) {
+          @if (carregando) {
             <tr>
-              <td (click)="abrirDetalhes(m)" class="nome-click">
-                {{ m.nome }}
-              </td>
-              <td>
-                {{ quantidades()[m.id!] }}
-              </td>
-              <td>
-                <div class="buttons">
-                  @if (temPermissao('medicamento:entrada')) {
-                    <a [routerLink]="['/medicamento/estoque', m.id]" class="btnEstoque">
-                      Entrada
-                    </a>
-                  }
-                  @if (temPermissao('medicamento:editar')) {
-                    <a [routerLink]="['/medicamento/edicao', m.id]" class="btn-editar"> Editar </a>
-                  }
-                  @if (temPermissao('medicamento:excluir')) {
-                    <button (click)="excluir(m.id!)" class="btn-excluir">Desabilitar</button>
-                  }
-                </div>
+              <td colspan="3" class="estado-tabela">
+                <span class="spinner"></span>
+                Carregando medicamentos...
               </td>
             </tr>
+          } @else if (medicamentosPaginados().length === 0) {
+            <tr>
+              <td colspan="3" class="estado-tabela">
+                @if (filtroNome.trim()) {
+                  Nenhum medicamento encontrado para "{{ filtroNome }}".
+                } @else {
+                  Nenhum medicamento cadastrado.
+                }
+              </td>
+            </tr>
+          } @else {
+            @for (m of medicamentosPaginados(); track m.id) {
+              <tr>
+                <td (click)="abrirDetalhes(m)" class="nome-click">
+                  {{ m.nome }}
+                </td>
+                <td>
+                  {{ quantidades()[m.id!] ?? 0 }}
+                </td>
+                <td>
+                  <div class="buttons">
+                    @if (temPermissao('medicamento:entrada')) {
+                      <a [routerLink]="['/medicamento/estoque', m.id]" class="btnEstoque">
+                        Entrada
+                      </a>
+                    }
+                    @if (temPermissao('medicamento:editar')) {
+                      <a [routerLink]="['/medicamento/edicao', m.id]" class="btn-editar">
+                        Editar
+                      </a>
+                    }
+                    @if (temPermissao('medicamento:excluir')) {
+                      <button (click)="excluir(m.id!)" class="btn-excluir">Desabilitar</button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
           }
         </tbody>
       </table>

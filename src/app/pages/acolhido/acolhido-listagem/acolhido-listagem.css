@@ -314,6 +314,39 @@ th:last-child {
   font-size: 14px;
 }
 
+.estado-listagem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 180px;
+  padding: 30px;
+  text-align: center;
+  color: #666;
+}
+
+.mensagem-vazia {
+  margin: 0;
+  font-size: 16px;
+  color: #777;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 4px solid #e0e0e0;
+  border-top-color: var(--cor-principal);
+  border-radius: 50%;
+  animation: girar 0.8s linear infinite;
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (max-width: 1024px) {
   .form-list-panel {
     width: calc(100% - 40px);

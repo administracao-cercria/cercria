@@ -72,7 +72,6 @@ export class EdicaoEvento implements OnInit {
         if (this.evento.data) {
           const dataUTC = new Date(this.evento.data);
 
-          // Compensa o offset para não deixar o UTC "roubar" um dia
           const dataLocal = new Date(
             dataUTC.getUTCFullYear(),
             dataUTC.getUTCMonth(),

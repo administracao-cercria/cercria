@@ -144,32 +144,69 @@ select.form-control {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 30px;
   gap: 12px;
-  flex-wrap: wrap;
+  width: 100%;
+  margin-top: 30px;
+  box-sizing: border-box;
 }
 
 .botoes-direita {
   display: flex;
+  align-items: center;
+  justify-content: flex-end;
   gap: 12px;
 }
 
-.btn-voltar {
-  background-color: var(--cor-secundaria);
-  color: #ffffff;
+.botoes button {
+  height: 44px;
+  min-width: 110px;
+  padding: 0 20px;
+  margin: 0;
   border: none;
-  padding: 12px 18px;
-  font-size: 14px;
-  font-weight: 500;
   border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
+  transition: background-color 0.2s ease;
 }
 
-.btn-voltar:hover {
+.botoes .btn-salvar {
+  background-color: var(--cor-principal);
+  color: #fff;
+}
+
+.botoes .btn-salvar:hover:not(:disabled) {
   background-color: var(--cor-terciaria);
-  transform: translateY(-2px);
+}
+
+.botoes .btn-limpar {
+  background-color: #6b7280;
+  color: #fff;
+}
+
+.botoes .btn-limpar:hover:not(:disabled) {
+  background-color: #4b5563;
+}
+
+.botoes .btn-voltar {
+  background-color: var(--cor-secundaria);
+  color: #fff;
+}
+
+.botoes .btn-voltar:hover:not(:disabled) {
+  background-color: var(--cor-terciaria);
+}
+
+.botoes button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 span {

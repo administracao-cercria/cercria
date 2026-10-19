@@ -30,12 +30,15 @@ export class ProdutoListagem implements OnInit {
   ) {}
   quantidades: { [produtoId: number]: number } = {};
 
+  carregando = true;
   ngOnInit(): void {
+    this.carregando = true;
     this.servico.selecionar().subscribe({
       next: (lista) => {
         this.produtos.set(lista);
         this.produtosFiltro.set(lista);
         this.produtosFiltrados.set(lista);
+        this.carregando = false;
 
         lista.forEach((produto) => {
           this.controleService.listarPorProduto(produto.id).subscribe({
@@ -86,13 +89,13 @@ export class ProdutoListagem implements OnInit {
   //Método excluir
   excluir(id: number): void {
     Swal.fire({
-      title: 'Excluir produto?',
+      title: 'Desabilitar produto?',
       text: 'Essa ação não poderá ser revertida.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
       cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Excluir',
+      confirmButtonText: 'Desabilitar',
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
@@ -112,11 +115,11 @@ export class ProdutoListagem implements OnInit {
               },
             });
 
-            this.toastr.success('Produto excluído com sucesso!');
+            this.toastr.success('Produto desabilitado com sucesso!');
           },
           error: (err) => {
             console.error(err);
-            this.toastr.error('Erro ao remover produto.');
+            this.toastr.error('Erro ao desabilitar produto.');
           },
         });
       }

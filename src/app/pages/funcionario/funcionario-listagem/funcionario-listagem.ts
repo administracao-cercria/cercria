@@ -26,13 +26,17 @@ export class FuncionarioListagem implements OnInit {
 
   constructor(private toastr: ToastrService) {}
 
+  carregando = true;
   ngOnInit(): void {
+    this.carregando = true;
     this.servico.selecionar().subscribe({
       next: (retorno) => {
         this.funcionarios.set(retorno);
+        this.carregando = false;
       },
       error: (err) => {
         console.error('erro:', err);
+        this.carregando = false;
       },
     });
   }
@@ -68,13 +72,13 @@ export class FuncionarioListagem implements OnInit {
   //Método excluir
   excluir(id: number): void {
     Swal.fire({
-      title: 'Excluir funcionário?',
+      title: 'Desabilitar funcionário?',
       text: 'Essa ação não poderá ser revertida.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
       cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Excluir',
+      confirmButtonText: 'Desabilitar',
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
@@ -84,11 +88,11 @@ export class FuncionarioListagem implements OnInit {
               next: (retorno) => this.funcionarios.set(retorno),
             });
 
-            this.toastr.success('Funcionário excluído com sucesso!');
+            this.toastr.success('Funcionário desabilitado com sucesso!');
           },
           error: (err) => {
             //console.error(err);
-            this.toastr.error('Erro ao remover funcionário.');
+            this.toastr.error('Erro ao desabilitar funcionário.');
           },
         });
       }

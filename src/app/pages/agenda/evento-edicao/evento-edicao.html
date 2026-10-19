@@ -153,8 +153,9 @@
           </button>
 
           <div class="botoes-direita">
-            <button type="reset" class="btn-limpar">Limpar</button>
-            <button type="submit" class="btn" [disabled]="salvando || form.invalid">
+            <button type="reset" class="btn-limpar" [disabled]="salvando">Limpar</button>
+
+            <button type="submit" class="btn-salvar" [disabled]="salvando || form.invalid">
               @if (salvando) {
                 Alterando...
               } @else {
@@ -164,12 +165,6 @@
           </div>
         </div>
       </fieldset>
-      @if (salvando) {
-        <div class="mensagem-salvando">
-          <span class="spinner"></span>
-          <span>Alterando, aguarde...</span>
-        </div>
-      }
     </form>
   </div>
 </div>

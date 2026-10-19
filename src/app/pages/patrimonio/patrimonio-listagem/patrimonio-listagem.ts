@@ -24,15 +24,19 @@ export class PatrimonioListagem implements OnInit {
   private servico = inject(PatrimonioService);
   constructor(private toastr: ToastrService) {}
 
+  carregando = true;
   ngOnInit(): void {
+    this.carregando = true;
     this.servico.selecionar().subscribe({
       next: (lista) => {
         this.patrimonios.set(lista);
         this.patrimoniosFiltro.set(lista);
         this.patrimoniosFiltrados.set(lista);
+        this.carregando = false;
       },
       error: (err) => {
         console.error('erro:', err);
+        this.carregando = false;
       },
     });
   }
@@ -82,13 +86,13 @@ export class PatrimonioListagem implements OnInit {
   //Método excluir
   excluir(id: number): void {
     Swal.fire({
-      title: 'Excluir patrimônio?',
+      title: 'Desabilitar patrimônio?',
       text: 'Essa ação não poderá ser revertida.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
       cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Excluir',
+      confirmButtonText: 'Desabilitar',
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
@@ -112,11 +116,11 @@ export class PatrimonioListagem implements OnInit {
               },
             });
 
-            this.toastr.success('Patrimônio excluído com sucesso!');
+            this.toastr.success('Patrimônio desabilitado com sucesso!');
           },
           error: (err) => {
             console.error(err);
-            this.toastr.error('Erro ao remover patrimônio.');
+            this.toastr.error('Erro ao desabilitar patrimônio.');
           },
         });
       }

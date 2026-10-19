@@ -25,13 +25,17 @@ export class AcolhidoListagem {
 
   constructor(private toastr: ToastrService) {}
 
+  carregando = true;
   ngOnInit(): void {
+    this.carregando = true;
     this.servico.selecionar().subscribe({
       next: (retorno) => {
         this.acolhidos.set(retorno);
+        this.carregando = false;
       },
       error: (err) => {
         console.error('erro:', err);
+        this.carregando = false;
       },
     });
   }
@@ -67,13 +71,13 @@ export class AcolhidoListagem {
   //Método excluir
   excluir(id: number): void {
     Swal.fire({
-      title: 'Excluir acolhido?',
+      title: 'Desacolher acolhido?',
       text: 'Essa ação não poderá ser revertida.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
       cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Excluir',
+      confirmButtonText: 'Desacolher',
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
@@ -83,11 +87,11 @@ export class AcolhidoListagem {
               next: (retorno) => this.acolhidos.set(retorno),
             });
 
-            this.toastr.success('Acolhido excluído com sucesso!');
+            this.toastr.success('Acolhido desabilitado com sucesso!');
           },
           error: (err) => {
             console.error(err);
-            this.toastr.error('Erro ao remover acolhido.');
+            this.toastr.error('Erro ao desabilitar acolhido.');
           },
         });
       }

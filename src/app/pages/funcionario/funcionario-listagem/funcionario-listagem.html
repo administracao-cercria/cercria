@@ -44,24 +44,37 @@
             <th>Ações</th>
           </tr>
         </thead>
+
         <tbody>
-          <!-- REGISTROS FILTRADOS -->
-          @for (f of funcionariosPaginados(); track f.id) {
+          @if (carregando) {
             <tr>
-              <td (click)="abrirDetalhes(f)" class="nome-click">
-                {{ f.nome }}
-              </td>
-              <td>
-                <div class="buttons">
-                  @if (temPermissao('funcionario:editar')) {
-                    <a [routerLink]="['/funcionario/edicao', f.id]" class="btn">Editar</a>
-                  }
-                  @if (temPermissao('funcionario:excluir')) {
-                    <a class="btn-excluir" (click)="excluir(f.id)"> Desabilitar </a>
-                  }
-                </div>
+              <td colspan="2" class="estado-tabela">
+                <span class="spinner"></span>
+                Carregando funcionários...
               </td>
             </tr>
+          } @else if (funcionariosPaginados().length === 0) {
+            <tr>
+              <td colspan="2" class="estado-tabela">Nenhum funcionário encontrado.</td>
+            </tr>
+          } @else {
+            @for (f of funcionariosPaginados(); track f.id) {
+              <tr>
+                <td (click)="abrirDetalhes(f)" class="nome-click">
+                  {{ f.nome }}
+                </td>
+                <td>
+                  <div class="buttons">
+                    @if (temPermissao('funcionario:editar')) {
+                      <a [routerLink]="['/funcionario/edicao', f.id]" class="btn">Editar</a>
+                    }
+                    @if (temPermissao('funcionario:excluir')) {
+                      <a class="btn-excluir" (click)="excluir(f.id)">Desabilitar</a>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
           }
         </tbody>
       </table>

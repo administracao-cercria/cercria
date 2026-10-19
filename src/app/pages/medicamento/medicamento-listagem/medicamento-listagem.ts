@@ -32,12 +32,15 @@ export class MedicamentoListagem implements OnInit {
     private cdr: ChangeDetectorRef,
   ) {}
 
+  carregando = true;
   ngOnInit(): void {
+    this.carregando = true;
     this.servico.selecionar().subscribe({
       next: (lista) => {
         this.medicamentos.set(lista);
         this.medicamentosFiltro.set(lista);
         this.medicamentosFiltrados.set(lista);
+        this.carregando = false;
 
         lista.forEach((medicamento) => {
           this.estoqueService.listarPorMedicamento(medicamento.id!).subscribe({
@@ -60,6 +63,7 @@ export class MedicamentoListagem implements OnInit {
                 ...quantidades,
                 [medicamento.id!]: 0,
               }));
+              this.carregando = false;
             },
           });
         });
@@ -102,13 +106,13 @@ export class MedicamentoListagem implements OnInit {
   //Método excluir
   excluir(id: number): void {
     Swal.fire({
-      title: 'Excluir medicamento?',
+      title: 'Desabilitar medicamento?',
       text: 'Essa ação não poderá ser revertida.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
       cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Excluir',
+      confirmButtonText: 'Desabilitar',
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
@@ -132,11 +136,11 @@ export class MedicamentoListagem implements OnInit {
               },
             });
 
-            this.toastr.success('Medicamento excluído com sucesso!');
+            this.toastr.success('Medicamento desabilitado com sucesso!');
           },
           error: (err) => {
             console.error(err);
-            this.toastr.error('Erro ao remover medicamento.');
+            this.toastr.error('Erro ao desabilitar medicamento.');
           },
         });
       }
