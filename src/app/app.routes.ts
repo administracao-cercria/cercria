@@ -32,7 +32,7 @@ import { Relatorios } from './pages/relatorios/relatorios';
 import { MedicamentoAdministracao } from './pages/medicamento/medicamento-administracao/medicamento-administracao';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'home', component: Home },
   {
     path: 'funcionario',
